@@ -1,0 +1,27 @@
+body {
+  background: khaki;
+}
+
+.boards {
+  background: khaki;
+  margin: 5px;
+  border: 5px;
+}
+
+button {
+  background-color: #C0B870;
+}
+
+.disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.statuses {
+  font-size: 2.5em;
+  /* 40px/16=2.5em */
+}
+
+.rules {
+  font-size: 2em;
+}
