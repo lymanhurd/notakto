@@ -2,6 +2,7 @@ window.onload = function() {
   var moveNumber;
   var winningBoards;
   var boardState;
+  var boardNodes;
   var ng = document.getElementById("newGame");
   ng.addEventListener('click', newGame);
   var plus = document.getElementById("plus");
@@ -21,6 +22,7 @@ function plusClick() {
   node.addEventListener('click', bdClick);
   parent.appendChild(node);
   boardState.push("---------");
+  boardNodes.push(node);
   initBoard(node);
   enableButton("minus", true);
 }
@@ -31,6 +33,7 @@ function minusClick() {
   if (children.length > 1) {
     parent.removeChild(children[children.length - 1]);
     boardState.pop();
+    boardNodes.pop();
   }
   if (children.length == 1) {
     enableButton("minus", false);
@@ -68,7 +71,7 @@ function drawX(c, i, j) {
     return;
   }
   var context2D = c.getContext("2d");
-  context2D.strokeStyle = ["red", "blue"][moveNumber++ % 2];
+  context2D.strokeStyle = ["red", "blue"][moveNumber % 2];
   context2D.beginPath();
   var x = 7;
   var y = 59 - x;
@@ -88,19 +91,26 @@ function drawX(c, i, j) {
     context2D.fillRect(0, 0, c.width, c.height);
     if (winningBoards == boardState.length) {
       var status = document.getElementById("status");
-      status.innerHTML = ["Red", "Blue"][moveNumber % 2] +
+      status.innerHTML = ["Blue", "Red"][moveNumber % 2] +
         " Won!";
+      return;
     }
   }
+  moveNumber++;
 }
 
 function bdClick(event) {
+  if (moveNumber % 2 == 1) {
+    return; /* It is the computer's turn. */
+  }
   enableButton("newGame", true);
   enableButton("minus", false);
   enableButton("plus", false);
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
-  updateStatus();
+  if (moveNumber % 2 == 1) {
+    getComputersMove();
+  }
 }
 
 function newGame() {
@@ -116,6 +126,7 @@ function newGame() {
     minusClick();
   }
   boardState = ["---------"];
+  boardNodes = [boards[0]];
   initBoard(boards[0]);
   var status = document.getElementById("status");
   status.innerHTML = "";
@@ -163,13 +174,14 @@ function checkWinning(b) {
   return false;
 }
 
-function updateStatus() {
+function getComputersMove() {
   var stateString = boardState.join("");
   if (stateString) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-        document.getElementById("status").innerHTML = this.responseText;
+	var move = JSON.parse(this.responseText);
+        drawX(boardNodes[move.board], move.column, move.row);
       }
     };
     xhttp.open("GET", "move/" + boardState.join(""), true);
