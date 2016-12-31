@@ -127,6 +127,9 @@ function newGame() {
   }
   boardState = ["---------"];
   boardNodes = [boards[0]];
+  for (count = 0; count < num - 1; count++) {
+    plusClick();
+  }
   initBoard(boards[0]);
   var status = document.getElementById("status");
   status.innerHTML = "";
