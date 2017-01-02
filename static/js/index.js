@@ -90,8 +90,11 @@ function drawX(c, i, j) {
     context2D.fillRect(0, 0, c.width, c.height);
     if (winningBoards == boardState.length) {
       var status = document.getElementById("status");
-      status.innerHTML = ["Blue", "Red"][moveNumber % 2] +
-        " Won!";
+      if (isComputersTurn()) {
+	  status.innerHTML = "Human won...this time...";
+      } else {
+	  status.innerHTML = "I, for one, welcome our new computer overlords.";
+      }
       return;
     }
   }
