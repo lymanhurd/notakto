@@ -3,14 +3,12 @@ window.onload = function() {
   var winningBoards;
   var boardState;
   var boardNodes;
-  var ng = document.getElementById("newGame");
-  ng.addEventListener('click', newGame);
-  var plus = document.getElementById("plus");
-  plus.addEventListener('click', plusClick);
-  var minus = document.getElementById("minus");
-  minus.addEventListener('click', minusClick);
-  var firstBoard = document.getElementById("1");
-  firstBoard.addEventListener('click', bdClick);
+  document.getElementById("newGame").addEventListener('click', newGame);
+  document.getElementById("plus").addEventListener('click', plusClick);
+  document.getElementById("minus").addEventListener('click', minusClick);
+  document.getElementById("ComputerFIrst").addEventListener('click',
+							    getComputersMove);
+  document.getElementById("1").addEventListener('click', bdClick);
   newGame();
 };
 
