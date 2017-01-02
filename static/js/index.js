@@ -1,13 +1,14 @@
 window.onload = function() {
-  var moveNumber;
   var winningBoards;
   var boardState;
   var boardNodes;
+  var computerMovesFirst;
+  var moveNumber;
   document.getElementById("newGame").addEventListener('click', newGame);
   document.getElementById("plus").addEventListener('click', plusClick);
   document.getElementById("minus").addEventListener('click', minusClick);
-  document.getElementById("ComputerFIrst").addEventListener('click',
-							    getComputersMove);
+  document.getElementById("computerFirst").addEventListener(
+      'click', computerFirst);
   document.getElementById("1").addEventListener('click', bdClick);
   newGame();
 };
@@ -98,7 +99,8 @@ function drawX(c, i, j) {
 }
 
 function bdClick(event) {
-  if (moveNumber % 2 == 1) {
+  enableButton("computerFirst", false);
+  if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
   enableButton("newGame", true);
@@ -106,17 +108,27 @@ function bdClick(event) {
   enableButton("plus", false);
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
-  if (moveNumber % 2 == 1) {
+  if (isComputersTurn()) {
     getComputersMove();
+  }
+}
+
+function isComputersTurn() {
+  if (computerMovesFirst) {
+    return moveNumber % 2 == 0;
+  } else {
+    return moveNumber % 2 == 1;
   }
 }
 
 function newGame() {
   moveNumber = 0;
+  computerMovesFirst = false;
   winningBoards = 0;
   enableButton("minus", false);
   enableButton("plus", true);
   enableButton("newGame", false);
+  enableButton("computerFirst", true);
   var count;
   var boards = document.getElementsByClassName("boards");
   var num = boards.length;
@@ -173,6 +185,12 @@ function checkWinning(b) {
     }
   }
   return false;
+}
+
+function computerFirst() {
+  enableButton("computerFirst", false);
+  computerMovesFirst = true;
+  getComputersMove()
 }
 
 function getComputersMove() {
