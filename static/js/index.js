@@ -206,7 +206,7 @@ function getComputersMove() {
         drawX(boardNodes[move.board], move.column, move.row);
       }
     };
-    xhttp.open("GET", "move/" + boardState.join(""), true);
+    xhttp.open("GET", "move/" + stateString, true);
     xhttp.send();
   }
 }
