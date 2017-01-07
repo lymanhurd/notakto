@@ -1,3 +1,6 @@
+var computerWins = 0;
+var humanWins = 0;
+
 window.onload = function() {
   var winningBoards;
   var boardState;
@@ -89,12 +92,15 @@ function drawX(c, i, j) {
     context2D.fillStyle = "khaki";
     context2D.fillRect(0, 0, c.width, c.height);
     if (winningBoards == boardState.length) {
-      var status = document.getElementById("status");
       if (isComputersTurn()) {
-	  status.innerHTML = "Human won...this time...";
+	    document.getElementById("status").innerHTML = "Human won...this time...";
+        humanWins += 1;
       } else {
-	  status.innerHTML = "I, for one, welcome our new computer overlords.";
+	    document.getElementById("status").innerHTML = "I, for one, welcome our new computer overlords.";
+	    computerWins += 1;
       }
+      document.getElementById("score").innerHTML = "Human: " + humanWins +
+        " Computer: " + computerWins;
       return;
     }
   }
