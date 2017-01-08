@@ -1,12 +1,12 @@
 var computerWins = 0;
 var humanWins = 0;
+var moveNumber = 0;
 
 window.onload = function() {
   var winningBoards;
   var boardState;
   var boardNodes;
   var computerMovesFirst;
-  var moveNumber;
   document.getElementById("newGame").addEventListener('click', newGame);
   document.getElementById("plus").addEventListener('click', plusClick);
   document.getElementById("minus").addEventListener('click', minusClick);
@@ -95,9 +95,11 @@ function drawX(c, i, j) {
       if (isComputersTurn()) {
 	    document.getElementById("status").innerHTML = "Human won...this time...";
         humanWins += 1;
+        moveNumber = 0;
       } else {
 	    document.getElementById("status").innerHTML = "I, for one, welcome our new computer overlords.";
 	    computerWins += 1;
+        moveNumber = 0;
       }
       document.getElementById("score").innerHTML = "Human: " + humanWins +
         " Computer: " + computerWins;
@@ -131,6 +133,11 @@ function isComputersTurn() {
 }
 
 function newGame() {
+  if (moveNumber > 0) {
+      computerWins += 1;
+      document.getElementById("score").innerHTML = "Human: " + humanWins +
+        " Computer: " + computerWins;
+  }
   moveNumber = 0;
   computerMovesFirst = false;
   winningBoards = 0;
