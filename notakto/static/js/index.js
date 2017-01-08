@@ -1,6 +1,7 @@
 var computerWins = 0;
 var humanWins = 0;
 var moveNumber = 0;
+var showLabels = false;
 
 window.onload = function() {
   var winningBoards;
@@ -13,8 +14,19 @@ window.onload = function() {
   document.getElementById("computerFirst").addEventListener(
       'click', computerFirst);
   document.getElementById("1").addEventListener('click', bdClick);
+  document.getElementById("showLabels").addEventListener('click', toggleShowLabels);
   newGame();
 };
+
+function toggleShowLabels() {
+  if (showLabels) {
+      document.getElementById("showLabels").innerHTML = "Show Labels";
+      showLabels = false;
+  } else {
+      document.getElementById("showLabels").innerHTML = "Hide Labels";
+      showLabels = true;
+  }
+}
 
 function plusClick() {
   var parent = document.getElementById("frame");
