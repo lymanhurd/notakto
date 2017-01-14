@@ -1,7 +1,10 @@
 var computerWins = 0;
 var humanWins = 0;
 var moveNumber = 0;
-var showLabels = false;
+// var showLabels = false;
+// var labels = ["1", "a", "b", "ab", "b\xB2", "ab\xB2", "c", "ac", "bc",
+// 	      "abc", "c\xB2", "ac\xB2", "bc\xB2", "abc\xB2", "d", "ad",
+// 	      "bd", "abd"];
 
 window.onload = function() {
   var winningBoards;
@@ -12,21 +15,22 @@ window.onload = function() {
   document.getElementById("plus").addEventListener('click', plusClick);
   document.getElementById("minus").addEventListener('click', minusClick);
   document.getElementById("computerFirst").addEventListener(
-      'click', computerFirst);
+    'click', computerFirst);
   document.getElementById("1").addEventListener('click', bdClick);
-  document.getElementById("showLabels").addEventListener('click', toggleShowLabels);
+  // document.getElementById("showLabels").addEventListener('click',
+  //   toggleShowLabels);
   newGame();
 };
 
-function toggleShowLabels() {
-  if (showLabels) {
-      document.getElementById("showLabels").innerHTML = "Show Labels";
-      showLabels = false;
-  } else {
-      document.getElementById("showLabels").innerHTML = "Hide Labels";
-      showLabels = true;
-  }
-}
+// function toggleShowLabels() {
+//   if (showLabels) {
+//       document.getElementById("showLabels").innerHTML = "Show Labels";
+//       showLabels = false;
+//   } else {
+//       document.getElementById("showLabels").innerHTML = "Hide Labels";
+//       showLabels = true;
+//   }
+// }
 
 function plusClick() {
   var parent = document.getElementById("frame");
@@ -97,6 +101,14 @@ function drawX(c, i, j) {
   context2D.lineTo(y + 63 * i, x + 63 * j);
   context2D.stroke();
   context2D.strokeStyle = "black";
+  context2D.font="18px Arial";
+  context2D.textAlign = "center";
+  // labelIndex = (labelIndex + 1) % 18;
+  // context2D.fillStyle = "khaki";
+  // context2D.fillText(lastLabel, 93, 200);
+  // lastLabel = labels[labelIndex]
+  // context2D.fillStyle = "black";
+  // context2D.fillText(lastLabel, 93, 200);
   if (checkWinning(c.id - 1)) {
     winningBoards++;
     boardState[c.id - 1] = "*********"
@@ -105,11 +117,13 @@ function drawX(c, i, j) {
     context2D.fillRect(0, 0, c.width, c.height);
     if (winningBoards == boardState.length) {
       if (isComputersTurn()) {
-	    document.getElementById("status").innerHTML = "Human won...this time...";
+	    document.getElementById("status").innerHTML =
+	      "Human won...this time...";
         humanWins += 1;
         moveNumber = 0;
       } else {
-	    document.getElementById("status").innerHTML = "I, for one, welcome our new computer overlords.";
+	    document.getElementById("status").innerHTML =
+	      "I, for one, welcome our new computer overlords.";
 	    computerWins += 1;
         moveNumber = 0;
       }
