@@ -135,14 +135,20 @@ function drawX(c, i, j) {
   moveNumber++;
 }
 
+function startGame() {
+  if (moveNumber == 0) {
+    enableButton("computerFirst", false);
+    enableButton("newGame", true);
+    enableButton("minus", false);
+    enableButton("plus", false);
+  }
+}
+
 function bdClick(event) {
-  enableButton("computerFirst", false);
   if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
-  enableButton("newGame", true);
-  enableButton("minus", false);
-  enableButton("plus", false);
+  startGame();
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
   if (isComputersTurn()) {
@@ -230,7 +236,7 @@ function checkWinning(b) {
 }
 
 function computerFirst() {
-  enableButton("computerFirst", false);
+  startGame();
   computerMovesFirst = true;
   getComputersMove()
 }

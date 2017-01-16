@@ -4,6 +4,7 @@ body {
 
 .boards {
   background: khaki;
+  max-width: 45%;
   margin: 5px;
   border: 5px;
 }
