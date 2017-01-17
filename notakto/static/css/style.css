@@ -9,8 +9,12 @@ body {
   border: 5px;
 }
 
-button {
-  background-color: #C0B870;
+#scorebox {
+  display: none;
+}
+
+#newgame {
+  display: none;
 }
 
 .disabled {
@@ -19,7 +23,7 @@ button {
 }
 
 .statuses {
-  font-size: 2.5em;
+  font-size: 1.5em;
   /* 40px/16=2.5em */
 }
 

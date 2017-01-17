@@ -1,6 +1,6 @@
 <html >
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width; initial-scale=1.0; user-scalable=0;">
+  <meta charset="UTF-8" name="viewport" content="initial-scale=1, user-scalable=0">
   <title>NoTakTo</title>
 
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
@@ -20,18 +20,31 @@
 
 <body>
   <h1>NoTakTo</h1>
-  <div id="buttons">
-    <button id="newGame" type="button">New Game</button>
-    <button id="plus" type="button">+</button>
-    <button id="minus" type="button">-</button>
-    <br/>
-    <button id="computerFirst" type="button">Computer Plays First</button>
-    <!-- <br/> -->
+  <div class="btn-toolbar" role="toolbar" aria-label=
+    "Toolbar with button groups">
+      <div class="btn-group-lg mr-2" role="group" aria-label="First group">
+        <button id="computerFirst" type="button" class="btn btn-primary">
+          Computer Plays First</button>
+        <button id="newGame" type="button" class="btn btn-outline-primary">
+          Quit Game</button>
+      </div>
+      <div class="btn-group-lg mr-2" role="group" aria-label="Second group">
+        <button id="plus" type="button" class="btn btn-outline-primary">+</button>
+        <button id="minus" type="button" class="btn btn-outline-primary">-</button>
+        <!--<button id="newGame" type="button" class="btn btn-outline-primary">
+          Quit Game</button>-->
+      </div>
     <!-- <button id="showLabels" type="button">Show Labels</button> -->
   </div>
-  <div>
-    <p id="status" class="statuses"></p>
-    <p id="score" class="scores">Human: 0 Computer: 0</p>
+  <div id="boxholder">
+    <div id="scorebox" class="alert alert-info alert-dismissible fade show"
+      role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <p id="status" class="statuses"></p>
+      <p id="score" class="scores">Human: 0 Computer: 0</p>
+    </div>
   </div>
   <div id="frame">
     <canvas id="1" width=186 height=186 class="boards">

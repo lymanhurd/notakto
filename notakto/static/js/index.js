@@ -33,12 +33,11 @@ window.onload = function() {
 // }
 
 function plusClick() {
-  var parent = document.getElementById("frame");
   var children = document.getElementsByClassName("boards");
   var node = children[0].cloneNode(true);
   node.id = children.length + 1;
   node.addEventListener('click', bdClick);
-  parent.appendChild(node);
+  document.getElementById("frame").appendChild(node);
   boardState.push("---------");
   boardNodes.push(node);
   initBoard(node);
@@ -129,6 +128,7 @@ function drawX(c, i, j) {
       }
       document.getElementById("score").innerHTML = "Human: " + humanWins +
         " Computer: " + computerWins;
+      showAlert();
       return;
     }
   }
@@ -164,11 +164,18 @@ function isComputersTurn() {
   }
 }
 
+function showAlert() {
+  var alertBox = document.getElementById("scorebox").cloneNode(true);
+  alertBox.id = "tempAlert";
+  document.getElementById("boxholder").appendChild(alertBox);
+}
+
 function newGame() {
   if (moveNumber > 0) {
-      computerWins += 1;
-      document.getElementById("score").innerHTML = "Human: " + humanWins +
-        " Computer: " + computerWins;
+    computerWins += 1;
+    document.getElementById("score").innerHTML = "Human: " + humanWins +
+      " Computer: " + computerWins;
+    showAlert();
   }
   moveNumber = 0;
   computerMovesFirst = false;
@@ -189,18 +196,11 @@ function newGame() {
     plusClick();
   }
   initBoard(boards[0]);
-  var status = document.getElementById("status");
-  status.innerHTML = "";
+  document.getElementById("status").innerHTML = "";
 }
 
 function enableButton(name, enable) {
-  var b = document.getElementById(name);
-  b.disabled = !enable;
-  if (enable) {
-    b.className = "";
-  } else {
-    b.className = "disabled";
-  }
+  document.getElementById(name).style.display = enable ? "" : "none";
 }
 
 function checkLegal(b, i, j) {
