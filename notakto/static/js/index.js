@@ -136,9 +136,8 @@ function drawX(c, i, j) {
 }
 
 function startGame() {
-  if (moveNumber == 0) {
+  if (moveNumber <= 1) {
     enableButton("computerFirst", false);
-    enableButton("newGame", true);
     enableButton("minus", false);
     enableButton("plus", false);
   }
@@ -148,9 +147,9 @@ function bdClick(event) {
   if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
-  startGame();
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
+  startGame();
   if (isComputersTurn()) {
     getComputersMove();
   }
@@ -167,6 +166,7 @@ function isComputersTurn() {
 function showAlert() {
   var alertBox = document.getElementById("scorebox").cloneNode(true);
   alertBox.id = "tempAlert";
+  alertBox.addEventListener('closed.bs.alert', newGame);
   document.getElementById("boxholder").appendChild(alertBox);
 }
 
@@ -182,7 +182,6 @@ function newGame() {
   winningBoards = 0;
   enableButton("minus", false);
   enableButton("plus", true);
-  enableButton("newGame", false);
   enableButton("computerFirst", true);
   var count;
   var boards = document.getElementsByClassName("boards");
@@ -236,9 +235,9 @@ function checkWinning(b) {
 }
 
 function computerFirst() {
-  startGame();
   computerMovesFirst = true;
   getComputersMove()
+  startGame();
 }
 
 function getComputersMove() {
