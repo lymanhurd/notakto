@@ -107,7 +107,7 @@ function drawX(c, i, j) {
   // context2D.fillText(lastLabel, 93, 200);
   if (checkWinning(c.id - 1)) {
     winningBoards++;
-    boardState[c.id - 1] = "*********"
+    boardState[c.id - 1] = "XXXXXXXXX"
     context2D.globalAlpha = 0.5;
     context2D.fillStyle = "khaki";
     context2D.fillRect(0, 0, c.width, c.height);

@@ -42,13 +42,8 @@ def smart_move(board_string):
     logging.info("Found winning move.")
     return winning_move
   else:
-    non_killing_move = first_move(board_string, move_does_not_kill_board)
-    if non_killing_move:
-        logging.info("Found non-killing move.")
-        return non_killing_move
-    else:
-      logging.info("Random move.")
-      return first_move(board_string, lambda b,i: b[i] == '-')
+    logging.info("Random move.")
+    return first_move(board_string, lambda b,i: b[i] == '-')
 
 
 def move_wins(board_string, index):
@@ -57,15 +52,6 @@ def move_wins(board_string, index):
   l[index] = 'X'
   board_list = list(map(''.join, zip(*[iter(''.join(l))]*9)))
   return is_winning(board_list)
-
-
-def move_does_not_kill_board(board_string, index):
-  board_string = board_string.upper()
-  logging.info("board_string %s" % board_string)
-  l = list(board_string)
-  l[index] = 'X'
-  board_list = list(map(''.join, zip(*[iter(''.join(l))]*9)))
-  return not is_dead(board_list[index/9])
 
 
 def is_dead(board):
