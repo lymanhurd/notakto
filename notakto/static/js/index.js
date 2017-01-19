@@ -10,12 +10,9 @@ window.onload = function() {
   var winningBoards;
   var boardState;
   var boardNodes;
-  var computerMovesFirst;
   document.getElementById("newGame").addEventListener('click', newGame);
   document.getElementById("plus").addEventListener('click', plusClick);
   document.getElementById("minus").addEventListener('click', minusClick);
-  document.getElementById("computerFirst").addEventListener(
-    'click', computerFirst);
   document.getElementById("1").addEventListener('click', bdClick);
   // document.getElementById("showLabels").addEventListener('click',
   //   toggleShowLabels);
@@ -116,19 +113,16 @@ function drawX(c, i, j) {
     context2D.fillRect(0, 0, c.width, c.height);
     if (winningBoards == boardState.length) {
       if (isComputersTurn()) {
-	    document.getElementById("status").innerHTML =
-	      "Human won...this time...";
         humanWins += 1;
-        moveNumber = 0;
       } else {
-	    document.getElementById("status").innerHTML =
-	      "I, for one, welcome our new computer overlords.";
 	    computerWins += 1;
-        moveNumber = 0;
       }
-      document.getElementById("score").innerHTML = "Human: " + humanWins +
-        " Computer: " + computerWins;
-      showAlert();
+      moveNumber = 0;
+      document.getElementById("humanScore").innerHTML = "Human: " + humanWins;
+      document.getElementById("computerScore").innerHTML = " Computer: " +
+        computerWins;
+      document.getElementById("newGame").innerHTML = "Play Again";
+      startGame();
       return;
     }
   }
@@ -136,53 +130,45 @@ function drawX(c, i, j) {
 }
 
 function startGame() {
-  if (moveNumber <= 1) {
-    enableButton("computerFirst", false);
-    enableButton("minus", false);
-    enableButton("plus", false);
-  }
+  enableButton("minus", false);
+  enableButton("plus", false);
 }
 
 function bdClick(event) {
   if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
+  document.getElementById("newGame").innerHTML = "Quit";
+  startGame();
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
-  startGame();
   if (isComputersTurn()) {
     getComputersMove();
   }
 }
 
 function isComputersTurn() {
-  if (computerMovesFirst) {
+  if (moveNumber == 0) {
+      return false;
+  }
+  if (boardNodes.length % 2 == 0) {
     return moveNumber % 2 == 0;
   } else {
     return moveNumber % 2 == 1;
   }
 }
 
-function showAlert() {
-  var alertBox = document.getElementById("scorebox").cloneNode(true);
-  alertBox.id = "tempAlert";
-  alertBox.addEventListener('closed.bs.alert', newGame);
-  document.getElementById("boxholder").appendChild(alertBox);
-}
-
 function newGame() {
   if (moveNumber > 0) {
     computerWins += 1;
-    document.getElementById("score").innerHTML = "Human: " + humanWins +
-      " Computer: " + computerWins;
-    showAlert();
+    document.getElementById("humanScore").innerHTML = "Human: " + humanWins;
+    document.getElementById("computerScore").innerHTML = " Computer: " +
+      computerWins;
   }
   moveNumber = 0;
-  computerMovesFirst = false;
   winningBoards = 0;
   enableButton("minus", false);
   enableButton("plus", true);
-  enableButton("computerFirst", true);
   var count;
   var boards = document.getElementsByClassName("boards");
   var num = boards.length;
@@ -195,7 +181,15 @@ function newGame() {
     plusClick();
   }
   initBoard(boards[0]);
-  document.getElementById("status").innerHTML = "";
+  if (document.getElementById("newGame").innerHTML == "Start") {
+    if (boardNodes.length % 2 == 0) {
+      getComputersMove();
+      document.getElementById("newGame").innerHTML = "Quit";
+      startGame();
+    }
+  } else {
+    document.getElementById("newGame").innerHTML = "Start";
+  }
 }
 
 function enableButton(name, enable) {
@@ -234,19 +228,13 @@ function checkWinning(b) {
   return false;
 }
 
-function computerFirst() {
-  computerMovesFirst = true;
-  getComputersMove()
-  startGame();
-}
-
 function getComputersMove() {
   var stateString = boardState.join("");
   if (stateString) {
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
-	var move = JSON.parse(this.responseText);
+	    var move = JSON.parse(this.responseText);
         drawX(boardNodes[move.board], move.column, move.row);
       }
     };
