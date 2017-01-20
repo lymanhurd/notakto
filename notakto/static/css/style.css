@@ -9,10 +9,6 @@ body {
   border: 5px;
 }
 
-#scorebox {
-  display: none;
-}
-
 .disabled {
   opacity: 0.8;
   cursor: not-allowed;
@@ -25,4 +21,8 @@ body {
 
 .rules {
   font-size: 2em;
+}
+
+span.emphasized {
+  font-weight: bold;
 }

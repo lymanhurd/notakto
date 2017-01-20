@@ -114,14 +114,19 @@ function drawX(c, i, j) {
     if (winningBoards == boardState.length) {
       if (isComputersTurn()) {
         humanWins += 1;
+        document.getElementById("humanScore").classList.add("emphasized");
+        document.getElementById("computerScore").classList.remove("emphasized");
       } else {
 	    computerWins += 1;
+        document.getElementById("humanScore").classList.remove("emphasized");
+        document.getElementById("computerScore").classList.add("emphasized");
       }
       moveNumber = 0;
       document.getElementById("humanScore").innerHTML = "Human: " + humanWins;
       document.getElementById("computerScore").innerHTML = " Computer: " +
         computerWins;
       document.getElementById("newGame").innerHTML = "Play Again";
+      document.getElementById("newGame").classList.remove("active");
       startGame();
       return;
     }
@@ -142,15 +147,12 @@ function bdClick(event) {
   startGame();
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
-  if (isComputersTurn()) {
+  if (isComputersTurn() && moveNumber > 0) {
     getComputersMove();
   }
 }
 
 function isComputersTurn() {
-  if (moveNumber == 0) {
-      return false;
-  }
   if (boardNodes.length % 2 == 0) {
     return moveNumber % 2 == 0;
   } else {
@@ -161,6 +163,8 @@ function isComputersTurn() {
 function newGame() {
   if (moveNumber > 0) {
     computerWins += 1;
+    document.getElementById("humanScore").classList.remove("emphasized");
+    document.getElementById("computerScore").classList.add("emphasized");
     document.getElementById("humanScore").innerHTML = "Human: " + humanWins;
     document.getElementById("computerScore").innerHTML = " Computer: " +
       computerWins;
@@ -189,6 +193,7 @@ function newGame() {
     }
   } else {
     document.getElementById("newGame").innerHTML = "Start";
+    document.getElementById("newGame").classList.remove("active");
   }
 }
 
@@ -236,6 +241,11 @@ function getComputersMove() {
       if (this.readyState == 4 && this.status == 200) {
 	    var move = JSON.parse(this.responseText);
         drawX(boardNodes[move.board], move.column, move.row);
+        if (move.winning) {
+          document.getElementById("newGame").classList.add("active");
+        } else {
+          document.getElementById("newGame").classList.remove("active");
+        }
       }
     };
     xhttp.open("GET", "move/" + stateString, true);
