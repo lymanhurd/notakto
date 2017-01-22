@@ -38,7 +38,7 @@ function plusClick() {
   boardState.push("---------");
   boardNodes.push(node);
   initBoard(node);
-  enableButton("minus", true);
+  document.getElementById("minus").classList.remove("disabled");
 }
 
 function minusClick() {
@@ -50,7 +50,7 @@ function minusClick() {
     boardNodes.pop();
   }
   if (children.length == 1) {
-    enableButton("minus", false);
+    document.getElementById("minus").classList.add("disabled");
   }
 }
 
@@ -143,7 +143,10 @@ function bdClick(event) {
   if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
-  document.getElementById("newGame").innerHTML = "Quit";
+  if (moveNumber == 0) {
+    document.getElementById("newGame").innerHTML = "Quit";
+    document.getElementById("newGame").classList.remove("active");
+  }
   startGame();
   drawX(event.target, Math.floor(event.layerX / 63),
     Math.floor(event.layerY / 63));
@@ -171,7 +174,9 @@ function newGame() {
   }
   moveNumber = 0;
   winningBoards = 0;
-  enableButton("minus", false);
+
+  document.getElementById("minus").classList.add("disabled");
+  enableButton("minus", true);
   enableButton("plus", true);
   var count;
   var boards = document.getElementsByClassName("boards");
@@ -187,8 +192,8 @@ function newGame() {
   initBoard(boards[0]);
   if (document.getElementById("newGame").innerHTML == "Start") {
     if (boardNodes.length % 2 == 0) {
-      getComputersMove();
       document.getElementById("newGame").innerHTML = "Quit";
+      getComputersMove();
       startGame();
     }
   } else {

@@ -23,8 +23,7 @@ def first_move(board_string, criterion):
 def smart_move(board_string):
   """Return an optimal move if one exists.
 
-  Picks a random winning move if possible, and if not tries to make a move that
-  doesn't kill a board and otherwise it makes a random move.
+  Picks a random winning move if possible, and if not, makes a random move.
   """
   winning_move = first_move(board_string, move_wins)
   if winning_move:
