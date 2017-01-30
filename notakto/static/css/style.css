@@ -25,4 +25,5 @@ body {
 
 span.emphasized {
   font-weight: bold;
+  background-color: white;
 }

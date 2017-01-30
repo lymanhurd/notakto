@@ -1,52 +1,31 @@
 <!DOCTYPE html>
-<html >
+<html>
     <head>
-      <meta charset="UTF-8">
-      <title>Hurd-Sullivan</title>
-          <link rel="shortcut icon" type ="image/x-icon" href="images/favicon.ico">-->
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-          <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
-          <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-          <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <title>Hurd-Sullivan</title>
+        <meta charset="UTF-8">
+        <link rel="shortcut icon" type ="image/x-icon" href="images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script>
+            $(function(){
+                $("#header").load("header.html");
+                $("#footer").load("footer.html");
+            });
+        </script>
     </head>
 
-    <body id="myPage" data-spy="scroll" data-target=".navbar" data-offset="60">
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#myPage">H-S</a>
-                </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#lyman">LYMAN</a></li>
-                        <li><a href="#glenn">GLENN</a></li>
-                        <li><a href="#rebecca">REBECCA</a></li>
-                        <li><a href="#drew">DREW</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <body id="homepage" data-spy="scroll" data-target=".navbar" data-offset="60">
+        <div id="header"></div> <!-- import for header.html -->
 
         <div class="jumbotron text-center">
             <h1>Hurd-Sullivan</h1>
             <p>Software. Because it's pretty neat.</p>
-            <form>
-                <div class="input-group">
-                    <div class="input-group-btn">
-                        <button type="button" class="btn btn-danger" href="mailto:info@hurd-sullivan.com" style="border-radius: 5px;">Comments?</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+        </div> <!-- .jumbotron -->
 
         <!-- Container (About Section) -->
         <div id="lyman" class="container-fluid">
@@ -57,8 +36,7 @@
                 <div class="col-sm-8">
                     <h2>Lyman "A God Living Amongst Mankind" Hurd</h2><br>
                     <h4>Lyman regularly moves mountains and shifts the ocean's tides</h4><br>
-                    <p><a href="notakto/index.html">NoTakTo</a></p><br>
-                    <button class="btn btn-default btn-lg" href="mailto:lyman@hurd-sullivan.com">Email Lyman. He's got tons of free time.</button>
+                    <a href="notakto/index.html"><button type="button" class="btn bg-purple-pink">Checkout Lyman's Game - NoTakTo</button></a><br>
                 </div>
             </div>
         </div>
@@ -69,7 +47,7 @@
                     <h2>Glenn "I want to learn the ways of the force like my father" Hurd</h2><br>
                     <h4>Young Padawan</h4><br>
                     <p>Please prove that to be true in this section</p><br>
-                    <button class="btn btn-default btn-lg" href="mailto:glenn@hurd-sullivan.com">Email Glenn</button>
+                    <a href="http://glennqhurd.pythonanywhere.com"><button type="button" class="btn bg-purple-pink">Visit Glenn's Personal Site</button></a>
                 </div>
                 <div class="col-sm-4">
                     <img src="images/glenn.jpg"/>
@@ -86,7 +64,7 @@
                     <h2>Rebecca "But it says 'Fun for <i>all</i> ages' " Sullivan</h2><br>
                     <h4>I'm really a dancer in disguise...</h4><br>
                     <p>Please prove that to be true in this section</p><br>
-                    <button class="btn btn-default btn-lg" href="mailto:rebecca@hurd-sullivan.com">Email Rebecca</button>
+                    <a href="http://rebecca-sullivan.com"><button type="button" class="btn bg-purple-pink">Visit Rebecca's Personal Site</button></a><br>
                 </div>
             </div>
         </div>
@@ -97,56 +75,12 @@
                     <h2>Drew &nbsp;"<i>[insert humor]</i>&nbsp;" Sullivan</h2><br>
                     <h4>Incessantly trying to be funny, Drew hits his mark about 3% of the time... on a good day.</h4><br>
                     <p>It's true.</p><br>
-                    <button class="btn btn-default btn-lg" href="mailto:drew@hurd-sullivan.com">Email Drew</button>
+                    <a href="http://drew-sullivan-dma.com"><button type="button" class="btn bg-purple-pink">Visit Drew's Personal Site</button></a><br>
                 </div>
                 <div class="col-sm-4">
                     <img src="images/Drew.jpg"/>
                 </div>
             </div>
         </div>
-
-
-        <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
-            <h2>What Our Parents Say About Us</h2>
-            <!-- Dots Below Quotes -->
-            <ol class="carousel-indicators">
-                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-                <li data-target="#myCarousel" data-slide-to="1"></li>
-                <li data-target="#myCarousel" data-slide-to="2"></li>
-                <li data-target="#myCarousel" data-slide-to="3"></li>
-            </ol>
-            <!-- Wrapper for slides -->
-            <div class="carousel-inner" role="listbox">
-                <div class="item active">
-                    <h4>"Did you know that Rebecca could read before she was born? Probably even before that. Oh! And she's a dancer!"<br><span style="font-style:normal;">Susan Hurd, Rebecca's Mom</span></h4>
-                </div>
-                <div class="item">
-                    <h4>"I never understood why Lyman adopted the Texan accent. He only lived there a couple years..."<br><span style="font-style:normal;">John Hurd, Lyman's Father</span></h4>
-                </div>
-                <div class="item">
-                    <h4>"No one will know one punnier than one Glenn Hurd"<br><span style="font-style:normal;">Lyman Hurd, Glenn's Pop</span></h4>
-                </div>
-                <div class="item">
-                    <h4>"Drew sure tries hard, bless his heart..."<br><span style="font-style:normal;">Tami Lenee, Drew's Mom</span></h4>
-                </div>
-            </div>
-            <!-- Left and right controls -->
-            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
-        </div> <!-- I'm not sure if this /div is an accident from the transfer over, but here it is just in case -->
-
-        <footer class="container-fluid text-center">
-            <a href="#myPage" title="To Top">
-                <span class="glyphicon glyphicon-chevron-up"></span>
-            </a>
-        </footer>
+        <div id="footer"></div> <!-- import for footer.html -->
         <script type="text/javascript" src="js/main.js"></script>
-    </body>
-</html>

@@ -79,10 +79,10 @@ function initBoard(c) {
 
 function drawX(c, i, j) {
   if (checkWinning(c.id - 1)) {
-    return;
+    return false;
   }
   if (!checkLegal(c.id - 1, i, j)) {
-    return;
+    return false;
   }
   var context2D = c.getContext("2d");
   context2D.strokeStyle = ["red", "blue"][moveNumber % 2];
@@ -128,10 +128,11 @@ function drawX(c, i, j) {
       document.getElementById("newGame").innerHTML = "Play Again";
       document.getElementById("newGame").classList.remove("active");
       startGame();
-      return;
+      return true;
     }
   }
   moveNumber++;
+  return true;
 }
 
 function startGame() {
@@ -143,13 +144,15 @@ function bdClick(event) {
   if (isComputersTurn()) {
     return; /* It is the computer's turn. */
   }
-  if (moveNumber == 0) {
+  startGame();
+  if (!drawX(event.target, Math.floor(event.layerX / 63),
+    Math.floor(event.layerY / 63))) {
+        return;
+  }
+  if (moveNumber == 1) {
     document.getElementById("newGame").innerHTML = "Quit";
     document.getElementById("newGame").classList.remove("active");
   }
-  startGame();
-  drawX(event.target, Math.floor(event.layerX / 63),
-    Math.floor(event.layerY / 63));
   if (isComputersTurn() && moveNumber > 0) {
     getComputersMove();
   }
