@@ -1,3 +1,6 @@
+# Checkers AI (in its own GIT repository)
+checkers/
+
 # Emacs files (backup and autosave).
 *~
 *#
