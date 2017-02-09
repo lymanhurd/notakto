@@ -2,7 +2,7 @@
 
 from bottle import default_app, route
 from notakto.notakto import smart_move
-from checkers.tree_search import find_move
+from checkers_ai.tree_search import find_move
 
 # NoTakTo
 # An implementation of the game NoTakTo introduced in the paper:

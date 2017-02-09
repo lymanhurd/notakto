@@ -1,9 +1,6 @@
 from monoid import is_winning
 from random import randint
 
-import logging
-
-
 def first_move(board_string, criterion):
   """Return a random move satisfying the criterion.
   """
@@ -27,10 +24,8 @@ def smart_move(board_string):
   """
   winning_move = first_move(board_string, move_wins)
   if winning_move:
-    logging.info("Found winning move.")
     return winning_move
   else:
-    logging.info("Random move.")
     return first_move(board_string, lambda b,i: b[i] == '-')
 
 
