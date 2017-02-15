@@ -1,8 +1,13 @@
 """Web app for hurd-sullivan.com."""
 
-from bottle import default_app, route
+from bottle import default_app, hook, response, route
 from notakto.notakto import smart_move
 from checkers_ai.tree_search import find_move
+
+@hook('after_request')
+def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = (
+        'glennqhurd.pythonanywhere.com')
 
 # NoTakTo
 # An implementation of the game NoTakTo introduced in the paper:
