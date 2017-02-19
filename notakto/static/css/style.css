@@ -25,5 +25,9 @@ body {
 
 span.emphasized {
   font-weight: bold;
-  background-color: white;
+  background-color: yellow;
+}
+
+canvas {
+    position: relative;
 }
