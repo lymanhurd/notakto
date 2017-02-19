@@ -31,3 +31,7 @@ span.emphasized {
 canvas {
     position: relative;
 }
+
+canvas.dead {
+   opacity: 0.5;
+}
