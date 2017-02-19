@@ -1,31 +1,38 @@
+img#hslogo {
+    float: right;
+    margin: 8px;
+    width: 85;
+    width: 85;
+}
+
 body {
-  background: khaki;
+    background: khaki;
 }
 
 .boards {
-  background: khaki;
-  max-width: 45%;
-  margin: 5px;
-  border: 5px;
+    background: khaki;
+    max-width: 45%;
+    margin: 5px;
+    border: 5px;
 }
 
 .disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
+    opacity: 0.8;
+    cursor: not-allowed;
 }
 
 .statuses {
-  font-size: 1.5em;
-  /* 40px/16=2.5em */
+    font-size: 1.5em;
+    /* 40px/16=2.5em */
 }
 
 .rules {
-  font-size: 2em;
+    font-size: 2em;
 }
 
 span.emphasized {
-  font-weight: bold;
-  background-color: yellow;
+    font-weight: bold;
+    background-color: yellow;
 }
 
 canvas {
