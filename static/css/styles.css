@@ -53,13 +53,20 @@ h4 {
     height: 100%;
     margin-bottom: 10px;
 }
+#hslogo {
+    height: 40px;
+}
+#homepage .navbar-brand {
+    padding: 5px;
+}
 #homepage button {
     color: white;
+    transition: .25s ease-out;
 }
 #homepage button:hover {
     color: #660033;
     background-color: white;
-    border: 2px solid #660033;
+    border: 1px solid #660033;
 }
 #homepage a:hover {
     color: #660033;
