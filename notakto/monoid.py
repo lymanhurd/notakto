@@ -1,7 +1,7 @@
 import logging
 
-# Lookup table for the monoid multiplcation table.  To preserve space only
-# indices (i, j) where i <= j are here as the multiplcation is commutative.
+# Lookup table for the monoid multiplication table.  To preserve space only
+# indices (i, j) where i <= j are here as the multiplication is commutative.
 LOOKUP_TABLE = {(0, 0): 0, (0, 1): 1, (0, 2): 2, (0, 3): 3, (0, 4): 4,
                 (0, 5): 5, (0, 6): 6, (0, 7): 7, (0, 8): 8, (0, 9): 9,
                 (0, 10): 10, (0, 11): 11, (0, 12): 12, (0, 13): 13,

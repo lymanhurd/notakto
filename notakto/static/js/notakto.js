@@ -148,6 +148,10 @@ var noTakToModule = (function () {
 	if (checkGameOver(true)) {
 	    return;
 	}
+	if (!monoidModule.isWinning(boardState)) {
+	    document.getElementById("gameStatus").classList.add(
+		"active");
+	}
 	getComputersMove();
     }
 
@@ -231,10 +235,6 @@ var noTakToModule = (function () {
 		    drawX(board, move.column, move.row);
 		    checkLegal(move.board, move.column, move.row);
 		    checkDeadBoard(move.board, move.column, move.row);
-		    if (move.winning) {
-		        document.getElementById("gameStatus").classList.add(
-			    "active");
-		    }
 	            moveNumber += 1;
 		    checkGameOver(false);
 	        }
