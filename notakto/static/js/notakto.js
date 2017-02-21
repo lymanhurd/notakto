@@ -204,8 +204,8 @@ var noTakToModule = (function () {
         var curBoard = boardState[b];
         for (var i = 0; i < winningBoards.length; i++) {
             if (curBoard.charAt(winningBoards[i][0]) == 'X' &&
-                curBoard.charAt(winningBoards[i][0]) == 'X' &&
-                curBoard.charAt(winningBoards[i][0]) == 'X') {
+                curBoard.charAt(winningBoards[i][1]) == 'X' &&
+                curBoard.charAt(winningBoards[i][2]) == 'X') {
                 boardState[b] = 'XXXXXXXXX';
                 document.getElementById(b + 1).classList.add('dead');
                 break;
