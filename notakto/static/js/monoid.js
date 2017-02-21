@@ -15,6 +15,35 @@ var monoidModule = (function () {
         return false;
     };
 
+    my.computerMove = function (boards) {
+        var startingIdx = Math.floor(Math.random() * 9 * boards.length);
+        var availableIdx = 0;
+        var winningIdx = -1;
+        for (var i = 0; i < 9 * boards.length; i++) {
+            var idx = (i + startingIdx) % (9 * boards.length);
+            if (boards[Math.floor(idx / 9)][idx % 9] == '-') {
+                availableIdx = idx;
+                if (testWinning(boards, idx)) {
+                    winningIdx = idx;
+                    break;
+                }
+            }
+        }
+        if (winningIdx != -1) {
+            return winningIdx;
+        } else {
+            return availableIdx;
+        }
+    };
+
+    function testWinning(boards, idx) {
+        var test = boards.slice(0);
+        var b = Math.floor(idx / 9);
+        var i = idx % 9;
+        test[b] = test[b].slice(0, i) + 'X' + test[b].substr(i + 1);
+        return my.isWinning(test);
+    }
+
     var boardValues = {
         '---------': 6,
         '-------XX': 15,

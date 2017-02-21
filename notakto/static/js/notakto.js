@@ -225,23 +225,34 @@ var noTakToModule = (function () {
     }
 
     function getComputersMove() {
-        var stateString = boardState.join('');
-        if (stateString) {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    var move = JSON.parse(this.responseText);
-                    var board = document.getElementById(move.board + 1);
-                    drawX(board, move.column, move.row);
-                    checkLegal(move.board, move.column, move.row);
-                    checkDeadBoard(move.board, move.column, move.row);
+        var moveIdx = monoidModule.computerMove(boardState);
+        var b = Math.floor(moveIdx / 9);
+        var col = moveIdx % 3;
+        var row = Math.floor((moveIdx % 9) / 3);
+        var board = document.getElementById((b + 1).toString());
+        drawX(board, col, row);
+        checkLegal(b, col, row);
+        checkDeadBoard(b, col, row);
                     moveNumber += 1;
                     checkGameOver(false);
-                }
-            };
-            xhttp.open('GET', 'move/' + stateString, true);
-            xhttp.send();
-        }
+
+        // var stateString = boardState.join('');
+        // if (stateString) {
+        //     var xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = function () {
+        //         if (this.readyState == 4 && this.status == 200) {
+        //             var move = JSON.parse(this.responseText);
+        //             var board = document.getElementById(move.board + 1);
+        //             drawX(board, move.column, move.row);
+        //             checkLegal(move.board, move.column, move.row);
+        //             checkDeadBoard(move.board, move.column, move.row);
+        //             moveNumber += 1;
+        //             checkGameOver(false);
+        //         }
+        //     };
+        //     xhttp.open('GET', 'move/' + stateString, true);
+        //     xhttp.send();
+        // }
     }
     return my;
 }());
