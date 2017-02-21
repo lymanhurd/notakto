@@ -198,6 +198,7 @@ var noTakToModule = (function () {
             return false;
         }
         boardState[b] = boardState[b].slice(0, idx) + 'X' + boardState[b].substr(idx + 1);
+        return true;
     }
 
     function checkDeadBoard(b) {
