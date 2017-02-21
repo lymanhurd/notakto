@@ -184,8 +184,7 @@ var noTakToModule = (function () {
     function checkLegal(b, i, j) {
 	var l = boardState[b].split("");
 	if (l[i + 3 * j] == "-") {
-            // TODO(lyman): consider eliminating different case x's.
-	    l[i + 3 * j] = ["x", "X"][moveNumber % 2];
+	    l[i + 3 * j] = 'X';
 	    boardState[b] = l.join("");
 	    return true;
 	} else {
