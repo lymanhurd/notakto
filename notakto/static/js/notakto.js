@@ -60,43 +60,32 @@ var noTakToModule = (function () {
         }
     }
 
+    function drawLine(ctx, x0, y0, x1, y1) {
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.stroke();
+    }
+
     function drawBoard(c) {
         var context2D = c.getContext('2d');
         context2D.strokeStyle = 'black';
         context2D.globalAlpha = 1.0;
         context2D.clearRect(0, 0, c.width, c.height);
         context2D.lineWidth = 3;
-        context2D.beginPath();
-        context2D.moveTo(60, 0);
-        context2D.lineTo(60, 185);
-        context2D.stroke();
-        context2D.beginPath();
-        context2D.moveTo(123, 0);
-        context2D.lineTo(123, 185);
-        context2D.stroke();
-        context2D.beginPath();
-        context2D.moveTo(0, 60);
-        context2D.lineTo(185, 60);
-        context2D.stroke();
-        context2D.beginPath();
-        context2D.moveTo(0, 123);
-        context2D.lineTo(185, 123);
-        context2D.stroke();
+        drawLine(context2D, 60, 0, 60, 185);
+        drawLine(context2D, 123, 0, 123, 185);
+        drawLine(context2D, 0, 60, 185, 60);
+        drawLine(context2D, 0, 123, 185, 123);
     }
 
     function drawX(c, i, j) {
         var context2D = c.getContext('2d');
         context2D.strokeStyle = ['red', 'blue'][moveNumber % 2];
-        context2D.beginPath();
         var x = 7;
         var y = 59 - x;
-        context2D.moveTo(x + 63 * i, x + 63 * j);
-        context2D.lineTo(y + 63 * i, y + 63 * j);
-        context2D.stroke();
-        context2D.beginPath();
-        context2D.moveTo(x + 63 * i, y + 63 * j);
-        context2D.lineTo(y + 63 * i, x + 63 * j);
-        context2D.stroke();
+        drawLine(context2D, x + 63 * i, x + 63 * j, y + 63 * i, y + 63 * j);
+        drawLine(context2D, x + 63 * i, y + 63 * j, y + 63 * i, x + 63 * j);
     }
 
     function gameStatusHandler() {
@@ -235,24 +224,6 @@ var noTakToModule = (function () {
         checkDeadBoard(b, col, row);
                     moveNumber += 1;
                     checkGameOver(false);
-
-        // var stateString = boardState.join('');
-        // if (stateString) {
-        //     var xhttp = new XMLHttpRequest();
-        //     xhttp.onreadystatechange = function () {
-        //         if (this.readyState == 4 && this.status == 200) {
-        //             var move = JSON.parse(this.responseText);
-        //             var board = document.getElementById(move.board + 1);
-        //             drawX(board, move.column, move.row);
-        //             checkLegal(move.board, move.column, move.row);
-        //             checkDeadBoard(move.board, move.column, move.row);
-        //             moveNumber += 1;
-        //             checkGameOver(false);
-        //         }
-        //     };
-        //     xhttp.open('GET', 'move/' + stateString, true);
-        //     xhttp.send();
-        // }
     }
     return my;
 }());
