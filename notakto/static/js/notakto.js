@@ -39,7 +39,7 @@ var noTakToModule = (function () {
 
     function getCanvas(i) {
         var children = document.getElementsByClassName('boards');
-        return children[i].firstElementChild();
+        return children[i].firstElementChild;
     }
 
     function plusClick() {
