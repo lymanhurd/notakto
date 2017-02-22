@@ -45,7 +45,7 @@ var noTakToModule = (function () {
     function plusClick() {
         var children = document.getElementsByClassName('boards');
         var node = children[0].cloneNode(true);
-        node.id = children.length + 1;
+        node.firstElementChild.id = children.length;
         node.firstElementChild.addEventListener('click', bdClick);
         document.getElementById('frame').appendChild(node);
         boardState.push('---------');
@@ -143,7 +143,7 @@ var noTakToModule = (function () {
         }
         var targetRow = Math.floor(event.layerX / 63);
         var targetCol = Math.floor(event.layerY / 63);
-        var boardNumber = event.target.id - 1;
+        var boardNumber = event.target.id;
         if (!checkLegal(boardNumber, targetRow, targetCol)) {
             return;
         }
