@@ -24,18 +24,23 @@ var noTakToModule = (function () {
     my.startUp = function () {
         document.getElementById('plus').addEventListener('click', plusClick);
         document.getElementById('minus').addEventListener('click', minusClick);
-        document.getElementById('1').addEventListener('click', bdClick);
+        getCanvas(0).addEventListener('click', bdClick);
         document.getElementById('gameStatus').addEventListener('click',
             gameStatusHandler);
         document.getElementById('gameStatus').innerHTML = 'Start';
         boardState = ['---------'];
-        drawBoard(document.getElementById('1'));
+        drawBoard(getCanvas(0));
         if (typeof(Storage) !== 'undefined') {
             for (var i = 0; i < localStorage.numBoards - 1; i++) {
                 plusClick();
             }
         }
     };
+
+    function getCanvas(i) {
+        var children = document.getElementsByClassName('boards');
+        return children[i].firstElementChild();
+    }
 
     function plusClick() {
         var children = document.getElementsByClassName('boards');
@@ -118,8 +123,8 @@ var noTakToModule = (function () {
         document.getElementById('gameStatus').innerHTML = 'Start';
         for (var i = 0; i < boardState.length; i++) {
             boardState[i] = '---------';
-            document.getElementById((i + 1).toString()).classList.remove('dead');
-            drawBoard(document.getElementById((i + 1).toString()));
+            getCanvas(i).classList.remove('dead');
+            drawBoard(getCanvas(i));
         }
         showButton('minus', true);
         showButton('plus', true);
@@ -197,7 +202,7 @@ var noTakToModule = (function () {
                 curBoard.charAt(winningBoards[i][1]) == 'X' &&
                 curBoard.charAt(winningBoards[i][2]) == 'X') {
                 boardState[b] = 'XXXXXXXXX';
-                document.getElementById(b + 1).classList.add('dead');
+                getCanvas(b).classList.add('dead');
                 break;
             }
         }
@@ -218,7 +223,7 @@ var noTakToModule = (function () {
         var b = Math.floor(moveIdx / 9);
         var col = moveIdx % 3;
         var row = Math.floor((moveIdx % 9) / 3);
-        var board = document.getElementById((b + 1).toString());
+        var board = getCanvas(b);
         drawX(board, col, row);
         checkLegal(b, col, row);
         checkDeadBoard(b, col, row);
