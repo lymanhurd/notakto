@@ -46,10 +46,10 @@ var noTakToModule = (function () {
         var children = document.getElementsByClassName('boards');
         var node = children[0].cloneNode(true);
         node.id = children.length + 1;
-        node.addEventListener('click', bdClick);
+        node.firstElementChild.addEventListener('click', bdClick);
         document.getElementById('frame').appendChild(node);
         boardState.push('---------');
-        drawBoard(node);
+        drawBoard(node.firstElementChild);
         document.getElementById('minus').classList.remove('disabled');
     }
 
