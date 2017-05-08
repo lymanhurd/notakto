@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grundy's Game</title>
+        <link rel="stylesheet" href="css/grundy.css">
+    </head>
+
+    <body>
+        <a href="../index.html"><img id="hslogo"
+        src="notakto/images/HS.gif"
+        alt="Go to Hurd-Sullivan.com"/></a>
+    <h1>Grundy's Game</h1>
+<div id="rules">
+<p>
+  First, set up the desired number (three minimum) of stones by using the
+  plus/minus buttons.  When you have the number you want, start the game by
+  making a move.  The computer will then make its move.</p>
+  <p>A move consists of breaking a group of stones into two groups with an
+  unequal number of stones.  You divide a group by clicking on the dot to the
+  right of the dividing point.
+  </p>
+  <p>For example, if you select the third dot of a group of five, you will
+  divide that group into a group of two and a group o three).  The computer
+  distinguishes groupd by changing colors.</p>
+ <p>The last player who can make a move, wins.  Note you cannot click on
+  a group with one or two members.</p>
+</div>
+<div id="controls"></div>
+<div id="setup" class="buttons">
+<button id="plus">+</button>
+<button id="minus">-</button>
+</div>
+<div id="game" class="buttons">
+<button id="quit" type="button">Quit</button>
+  <button id="reset">Reset</button>
+</div>
+<span id="alertText"></span>
+</id>
+
+<div id="frame">
+  <svg id="0" class="g1 dots" width="50" height="50">
+   <circle cx="25" cy="25" r="20"/>
+   Sorry, your browser does not support inline SVG.
+</svg>
+</div>
+    <script type="text/javascript" src="js/grundy.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+#hslogo {
+  float: right;
+  margin: 8px;
+  width: 85px;
+}
+
+#rules {
+    width: 75%;
+    margin 20px;
+}
+
+#alertText {
+    font-weight: bold;
+}
+
+.buttons {
+  display: inline;
+}
+
+#controls {
+    padding: 5px;
+}
+
+body {
+  background: khaki;
+  margin: 15px;
+}
+
+#frame {
+    padding 20px;
+}
+
+#quit {
+  display: none;
+}
+
+#reset {
+  display: none;
+}
+
+circle {
+  stroke: black;
+  stroke-width: 1;
+}
+
+.g1 circle {
+  fill: red;
+}
+
+.g2 circle {
+  fill: green;
+}
+
+.g3 circle {
+  fill: blue;
+}

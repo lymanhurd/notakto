@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Glenn Hurd</title>
+        <meta charset="UTF-8">
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script>
+            $(function(){
+                $("#header").load("header.html");
+                $("#footer").load("footer.html");
+            });
+        </script>
+    </head>
+
+    <body id="homepage" data-spy="scroll" data-target=".navbar" data-offset="60">
+        <div id="header"></div> <!-- import for header.html -->
+        <!-- Container (About Section) -->
+        <div id="glenn" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h2>Glenn "I want to learn the ways of the force like my father" Hurd</h2><br>
+                    <h4>Seeker after truth...</h4><br>
+                    <p>Having completed his CS (and math) degree at Georgia State, Glenn is
+                    striving to expand his horizons by picking up new languages,
+                    new techniques and new challenges.  Happily he has inherited
+                    his father's love of games and puzzles which has led to
+                    numerous collaborations for the shear joy of it.</p><p>Glenn
+                    has a long history in customer service which he has channeled into designing usable interfaces as well as running his own tutoring business.</p><br>
+                    <a href="http://www.gqhtutoring.com/home.html"><button type="button" class="btn bg-purple-pink">Visit Glenn's Math/Computer Science Tutoring Site</button></a>
+                    <a href="http://glennqhurd.pythonanywhere.com"><button type="button" class="btn bg-purple-pink">Glenn and Lyman's Checkers Game</button></a>
+                </div>
+                <div class="col-sm-4">
+                    <img src="images/glenn.jpg"/>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
