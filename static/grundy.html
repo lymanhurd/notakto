@@ -20,7 +20,7 @@
   right of the dividing point.
   </p>
   <p>For example, if you select the third dot of a group of five, you will
-  divide that group into a group of two and a group o three).  The computer
+  divide that group into a group of two and a group of three).  The computer
   distinguishes groupd by changing colors.</p>
  <p>The last player who can make a move, wins.  Note you cannot click on
   a group with one or two members.</p>
@@ -42,6 +42,23 @@
    <circle cx="25" cy="25" r="20"/>
    Sorry, your browser does not support inline SVG.
 </svg>
+</div>
+<div id="strategy">
+    <h2>Strategy</h2>
+    <p>
+        The strategy consists of making sure you leave you opponent wih a zero
+        nim sum where the nim values for each heap size are taken from the
+        following table:
+
+        <table class>
+            <tr><th>Heap Size</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
+            <td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td>
+            <td>12</td><td>13</td><td>14</td><td>15</td></tr>
+            <tr><th>Nimber</th><td>0</td>><td>0</td><td>1</td><td>0</td><td>2</td>
+            <td>1</td><td>0</td><td>2</td><td>1</td><td>0</td><td>2</td>
+            <td>1</td><td>3</td><td>2</td><td>1</td></tr>
+        </table>
+    </p>
 </div>
     <script type="text/javascript" src="js/grundy.js"></script>
 </body>
