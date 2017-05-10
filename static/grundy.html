@@ -2,7 +2,8 @@
 <html>
     <head>
         <title>Grundy's Game</title>
-        <link rel="stylesheet" href="css/grundy.css">
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <link rel="stylesheet" href="css/grundy.css" type="text/css">
     </head>
 
     <body>
@@ -11,19 +12,24 @@
         alt="Go to Hurd-Sullivan.com"/></a>
     <h1>Grundy's Game</h1>
 <div id="rules">
-<p>
-  First, set up the desired number (three minimum) of stones by using the
+  <p>First, set up the desired number (three minimum) of dots by using the
   plus/minus buttons.  When you have the number you want, start the game by
-  making a move.  The computer will then make its move.</p>
-  <p>A move consists of breaking a group of stones into two groups with an
+  making a move.  The computer will then make its move.
+  </p>
+
+  <p>A move consists of breaking a group of dots into two groups with an
   unequal number of stones.  You divide a group by clicking on the dot to the
   right of the dividing point.
   </p>
+
   <p>For example, if you select the third dot of a group of five, you will
   divide that group into a group of two and a group of three).  The computer
-  distinguishes groupd by changing colors.</p>
- <p>The last player who can make a move, wins.  Note you cannot click on
-  a group with one or two members.</p>
+  distinguishes groupd by changing colors.
+  </p>
+
+  <p>The last player who can make a move, wins.  Note you cannot click on
+  a group with one or two members.
+  </p>
 </div>
 <div id="controls"></div>
 <div id="setup" class="buttons">
@@ -35,7 +41,6 @@
   <button id="reset">Reset</button>
 </div>
 <span id="alertText"></span>
-</id>
 
 <div id="frame">
   <svg id="0" class="g1 dots" width="50" height="50">
@@ -46,19 +51,50 @@
 <div id="strategy">
     <h2>Strategy</h2>
     <p>
-        The strategy consists of making sure you leave you opponent wih a zero
-        nim sum where the nim values for each heap size are taken from the
-        following table:
-
-        <table class>
-            <tr><th>Heap Size</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td>
-            <td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td>
-            <td>12</td><td>13</td><td>14</td><td>15</td></tr>
-            <tr><th>Nimber</th><td>0</td>><td>0</td><td>1</td><td>0</td><td>2</td>
-            <td>1</td><td>0</td><td>2</td><td>1</td><td>0</td><td>2</td>
-            <td>1</td><td>3</td><td>2</td><td>1</td></tr>
-        </table>
+        The strategy is to leave your opponent with a zero nim sum where the nim
+        values for each heap size are taken from the following table.  A
+        discussion of how to add nimbers is <a href="nimber.html">here</a> and a
+        discussion of how this table was computed is
+        <a href="mex.html">here</a>:
     </p>
+        <table summary="Nimbers associated with different heap sizes.">
+            <tr>
+                <th>Heap Size</th>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+                <td>10</td>
+                <td>11</td>
+                <td>12</td>
+                <td>13</td>
+                <td>14</td>
+                <td>15</td>
+            </tr>
+            <tr>
+                <th>Nimber</th>
+                <td>0</td>
+                <td>0</td>
+                <td>1</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td>0</td>
+                <td>2</td>
+                <td>1</td>
+                <td>3</td>
+                <td>2</td>
+                <td>1</td>
+            </tr>
+        </table>
 </div>
     <script type="text/javascript" src="js/grundy.js"></script>
 </body>
