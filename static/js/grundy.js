@@ -36,6 +36,7 @@ var grundyModule = (function() {
     var dot = children[0].cloneNode(true);
     dot.id = children.length;
     dot.firstElementChild.addEventListener("click", dotClick);
+    dot.lastElementChild.addEventListener("click", dotClick);
     document.getElementById("frame").appendChild(dot);
     document.getElementById("minus").disabled = false;
   }
@@ -177,6 +178,13 @@ var grundyModule = (function() {
       var svgNode = document.getElementsByClassName("dots")[i];
       svgNode.classList.add(c);
       svgNode.classList.remove(oldColor);
+      if (c == "g1") {
+	  svgNode.lastElementChild.innerHTML = "R";
+      } else if (c == "g2") {
+	  svgNode.lastElementChild.innerHTML = "G";
+      } else {
+	  svgNode.lastElementChild.innerHTML = "B";
+      }
     }
   }
 

@@ -23,6 +23,7 @@
 
 table {
     border-collapse: collapse;
+    pading: 0 0 10px 0;
 }
 
 table, th, td {

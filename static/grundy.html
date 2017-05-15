@@ -24,7 +24,7 @@
 
   <p>For example, if you select the third dot of a group of five, you will
   divide that group into a group of two and a group of three).  The computer
-  distinguishes groupd by changing colors.
+  distinguishes groups by changing colors.
   </p>
 
   <p>The last player who can make a move, wins.  Note you cannot click on
@@ -45,6 +45,7 @@
 <div id="frame">
   <svg id="0" class="g1 dots" width="50" height="50">
    <circle cx="25" cy="25" r="20"/>
+   <text x="25" y="25" text-anchor="middle" alignment-baseline="middle">R</text>
    Sorry, your browser does not support inline SVG.
 </svg>
 </div>
@@ -55,7 +56,13 @@
         values for each heap size are taken from the following table.  A
         discussion of how to add nimbers is <a href="nimber.html">here</a> and a
         discussion of how this table was computed is
-        <a href="mex.html">here</a>:
+        <a href="mex.html">here</a>.  Note that it is conjectured (in <a
+        href="https://github.com/sserdoubleh/ACM/tree/master/knowledge">Winning
+        Ways for Your Mathematical Plays</a>) that this
+        table eventually settles down to be periodic as is the case with
+        <a href="./kayles.html">Kayles</a>, this remains unproven despite Achim
+        Flammenkamp having computed this table to 2<sup>35</sup> dots
+        <a href="http://wwwhomes.uni-bielefeld.de/achim/grundy.html">here</a>:
     </p>
         <table summary="Nimbers associated with different heap sizes.">
             <tr>
