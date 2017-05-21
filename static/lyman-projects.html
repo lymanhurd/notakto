@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lyman Hurd's Projects</title>
+        <meta charset="UTF-8">
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script>
+            $(function(){
+                $("#header").load("header.html");
+                $("#footer").load("footer.html");
+            });
+        </script>
+    </head>
+
+    <body id="homepage" data-spy="scroll" data-target=".navbar" data-offset="60">
+        <div id="header"></div> <!-- import for header.html -->
+        <!-- Container (About Section) -->
+        <div id="lyman-projects" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h2>Lyman Hurd's Projects</h2><br>
+		    <ul>
+		      <li><a href="notakto/index.html">NoTakTo: a non-trivial variant of Tic Tac Toe</a>
+		      </li>
+		      <li>
+			<a href="grundy.html">Grundy's Game: a variant of Nim</a>
+		      </li>
+		    </ul>
+                </div>
+                <div class="col-sm-4">
+                    <img src="images/Lyman.jpg"/>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>
