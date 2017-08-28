@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Kayles</title>
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <link rel="stylesheet" href="css/grundy.css">
+    </head>
+
+    <body>
+        <a href="../index.html"><img id="hslogo"
+        src="notakto/images/HS.gif"
+        alt="Go to Hurd-Sullivan.com"/></a>
+    <h1>Kayles</h1>
+<div id="rules">
+<p>
+  Use the plus/minus buttons to add or subtract dots, three minimum)
+  and then each player takes turn removing one or
+  two <strong>adjacent</strong> dots.  To remove a pair of adjacent
+  dots, press the small circle between the dots.</p>
+ <p>The last player who can make a move, wins.</p>
+</div>
+<div id="controls"></div>
+<div id="setup" class="buttons">
+<button id="plus">+</button>
+<button id="minus">-</button>
+</div>
+<div id="game" class="buttons">
+<button id="quit" type="button">Quit</button>
+  <button id="reset">Reset</button>
+</div>
+<span id="alertText"></span>
+</id>
+
+<div id="frame">
+  <svg id="0" class="g1 dots" width="50" height="50">
+   <circle cx="25" cy="25" r="20"/>
+   Sorry, your browser does not support inline SVG.
+</svg>
+</div>
+<div id="strategy">
+    <h2>Strategy</h2>
+    <p>
+        The strategy is to leave your opponent with a zero nim sum
+        where the nim values for each heap size are taken from the
+        following table.  First check the list of exceptional values
+        and if the number of dots does not appear there, take the
+        remainder after dividing by 12 and look up the value n the
+        first table.  Kayles has the property that apart from the
+        exception list, the first table describes any possible number
+        of dots.  Discussion of how to add nimbers
+        is <a href="nimber.html">here</a> and a discussion of how this
+        table was computed is
+        <a href="mex.html">here</a>:
+    </p>
+        <table summary="Nimbers associated with different heap sizes.">
+            <tr>
+                <th>Heap Size Mod 12</th>
+                <td>0</td>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+                <td>10</td>
+                <td>11</td>
+            </tr>
+<br/>
+            <tr>
+                <th>Nimber</th>
+                <td>4</td>
+                <td>1</td>
+                <td>2</td>
+                <td>8</td>
+                <td>1</td>
+                <td>4</td>
+                <td>7</td>
+                <td>2</td>
+                <td>1</td>
+                <td>8</td>
+                <td>2</td>
+                <td>7</td>
+            </tr>
+        </table>
+        <table summary="Nimbers associated with different heap sizes.">
+            <tr>
+                <th>Exceptional Heap Sizes</th>
+                <td>0</td>
+                <td>3</td>
+                <td>6</td>
+                <td>9</td>
+                <td>11</td>
+                <td>15</td>
+                <td>18</td>
+                <td>21</td>
+                <td>22</td>
+                <td>28</td>
+                <td>34</td>
+                <td>39</td>
+                <td>57</td>
+                <td>70</td>
+            </tr>
+            <tr>
+                <th>Nimber</th>
+                <td>0</td>
+                <td>3</td>
+                <td>3</td>
+                <td>4</td>
+                <td>6</td>
+                <td>7</td>
+                <td>3</td>
+                <td>4</td>
+                <td>6</td>
+                <td>5</td>
+                <td>6</td>
+                <td>3</td>
+                <td>4</td>
+                <td>6</td>
+            </tr>
+        </table>
+</div>
+    <!--<script type="text/javascript" src="js/grundy.js"></script>-->
+</body>
+</html>

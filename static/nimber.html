@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nimbers</title>
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <link rel="stylesheet" href="css/grundy.css" type="text/css">
+    </head>
+
+    <body>
+        <a href="../index.html"><img id="hslogo"
+        src="notakto/images/HS.gif"
+        alt="Go to Hurd-Sullivan.com"/></a>
+	<h1>Nimbers</h1>
+	<p>To add two Nimbers you follow slightly different rules from
+	normal addition.  You still have the expected properties that:
+        </p>
+        <ul>
+        <li> x + y = y + x</li>
+        <li> x + (y + z) = (x + y) + z</li>
+        </ul>
+        <p>but we have some additional rules including:
+        </p>
+        <ul>
+        <li> x + x = 0 for any x.</li>
+        </ul>
+	<p>
+        To add numbers that are not equal, we break the number up into
+        a sum of powers of two always taking out the biggest possible
+        power of two first.  E.g., 10 = 8 + 2, 7 = 4 + 2 + 1.  Because
+        we start with the largest possible power of two, there can
+        never be two of the same number in this decomposition or else
+        we were not aggressive enough.  We then use the fact that x +
+        x = 0 to cancel pairs and finally the sum we get is given by
+        adding all the powers of two that did not have pair.
+	</p>
+        <p>
+	For example if we want to add 10 and 7 we write 10 = 8 + 2, 7
+	= 4 + 2 + 1.  The pair of 2's cancels and so we are left
+	with 15 = 8 + 4 + 2 + 1.
+	</p>
+        <p>
+        Similarly to add 6 and 3 we get 7 = 4 + 2 + 1, 3 = 2 + 1.  The
+        2's and 1's cancel leaving 4.
+	</p>
+        <p>
+        Lastly adding <em>1, 2</em> and <em>3</em> we get 1 = 1, 2 = 2, 3 = 1 + 2.
+        Everything cancels to leave 0.
+	</p>
+    </body>
+</html>

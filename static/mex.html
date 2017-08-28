@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculating Nimbers</title>
+        <link rel="icon" type ="image/x-icon" href="images/favicon.ico">
+        <link rel="stylesheet" href="css/grundy.css" type="text/css">
+    </head>
+
+    <body>
+        <a href="../index.html"><img id="hslogo"
+        src="notakto/images/HS.gif"
+        alt="Go to Hurd-Sullivan.com"/></a>
+	<h1>Calculating Nimbers</h1>
+	<h1>Kayles</h1>
+
+	<h1>Grundy's Game</h1>
+        <p>
+        Each move divides the group into the sum of two groups.  The
+        general rule for computing Nimbers is that the assigned Nimber
+        is the smallest value that cannot be reached at the next
+        stage.  We also know that there are no moves possible for 1
+        and 2 dots so that G(1) = G(2) = 0.
+	</p>
+        <p>
+        For example, there is a single legal move from a group of
+        three and that move leads to two games whose Nimber is 0.
+        Therefore the smallest number we cannot reach is 1 hence G(3)
+        = 1.
+        </p>
+        <p>
+        Starting from a row of four, there is only one legal division
+        since (2, 2) is forbidden by the rules.  This leaves (1, 3)
+        (or the equivalent (3, 1).  We know that G(1) = 0 and G(3) = 1
+        and therefore the only Nimber we can achieve starting with a
+        row of four is one.  The smallest number we <em>cannot</em>
+        get is zero which is therefore the value of this position G(4)
+        = 0.
+        </p>
+        <p>
+        From 5 we can reach (1, 4) which has value 0 + 0 = 0 and we
+        can reach (2, 3) which has value 0 + 1 = 1.  Therefore the
+        smallest number we cannot achieve is 2 and G(5) = 2.</p>
+	<code>
+	  def compute_grundy_table:
+	      nimber = (n + 1) * [0]
+	</code>
+    </body>
+</html>

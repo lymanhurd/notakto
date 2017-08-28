@@ -1,0 +1,22 @@
+body {
+    background-image: url("../images/pinkpurplebackground.jpg");
+    background-color: lightblue;
+}
+
+div {
+    width: 500px;
+}
+
+.container div {
+    margin: 0 auto;
+}
+
+p {
+  font-size: 120%;
+  background-color: lightblue;
+}
+
+h1, h3 {
+    font-family: "Comic Sans MS", cursive, sans-serif !important;
+    background-color: lightblue;
+}
