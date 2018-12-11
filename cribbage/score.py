@@ -3,7 +3,7 @@ import logging
 from crib_utils import card_value
 
 # Number of points earned by 0-4 copies of the same card value.
-PAIRS = (0, 0, 2, 6, 12)
+PAIRS = (0, 0, 2, 6, 12, -1)
 
 
 def scores(hand, crib, start):
@@ -12,7 +12,8 @@ def scores(hand, crib, start):
     return hs, cs
 
 
-def score(hd, start, is_crib = False):
+def score(hd, start, is_crib=False):
+    assert len(hd) == 4
     hand = hd[:]
     points = 0
     # nibs
