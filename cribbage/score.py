@@ -1,15 +1,20 @@
+from __future__ import division
+
 import logging
 
 from crib_utils import card_value
 
 # Number of points earned by 0-4 copies of the same card value.
-PAIRS = (0, 0, 2, 6, 12, -1)
+PAIRS = (0, 0, 2, 6, 12, 0)
 
 
 def scores(hand, crib, start):
     hs = score(hand, start)
-    cs = score(crib, start, is_crib=True) if crib else 0
-    return hs, cs
+    if crib:
+        cs = score(crib, start, is_crib=True)
+        return hs, cs
+    else:
+        return (hs,)
 
 
 def score(hd, start, is_crib=False):
@@ -85,7 +90,7 @@ def score_sequence(seq):
     logging.info('-points = %s' % points)
 
     # check for pair, pair royal, double pair royal
-    cv = seq[-1]
+    cv = seq[-1] % 13
     run = 1
     for s in reversed(seq[:-1]):
         if cv != s % 13:

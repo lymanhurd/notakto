@@ -33,7 +33,7 @@ def cribbage_command(command, query):
         if query.get('crib', ''):
             crib = [card_number(c) for c in query.crib.split(',')]
             assert len(crib) == 4
-        return '%d,%d' % scores(hand, crib, start_card)
+        return ','.join(map(str, scores(hand, crib, start_card)))
     elif command.lower() == 'sequence':
         seq = [card_number(c) for c in query.seq.split(',')]
         return str(score_sequence(seq))
