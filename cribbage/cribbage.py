@@ -17,7 +17,7 @@ def cribbage_command(command, query):
     # relevant to "discard" and "play"
     computer_dealt = query.get('dealer', 'C').upper() == 'C'
     # used by "discard", "play"
-    hand = [card_number(c) for c in query.hand.split(',')]
+    hand = [card_number(c) for c in query.get('hand', 'AC').split(',')]
 
     # Given six dealt cards, choose two to discard to the crib.
     if command.lower() == 'discard':
