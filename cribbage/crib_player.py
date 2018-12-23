@@ -47,10 +47,11 @@ class StandardPlayer(BasePlayer):
         crib_coeff = 1 if computer_dealt else -1
         for d in _DIVISIONS:
             total = 0
+            discards = [hand[i] for i in range(6) if d[i]]
+            kept = [hand[i] for i in range(6) if not d[i]]
             for start in range(13):
-                discards = [hand[i] for i in range(6) if d[i]]
                 total += crib_coeff * expected_crib(discards, start)
-                total += score([hand[i] for i in range(6) if not d[i]], start)
+                total += score(kept, start)
             if total > best_score:
                 best_div = d
                 best_score = total
@@ -67,4 +68,11 @@ class StandardPlayer(BasePlayer):
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
     def _priority(self, merged, card):
-        return 100*score_sequence(merged + [card]) + card_value(card)
+        expected_score = score_sequence(merged + [card])
+        best_response = 0
+        for response in range(13):
+            response_score = score_sequence(merged + [card, response])
+            if response_score > best_response:
+                best_response = response
+        expected_score -= 0.3 * best_response
+        return 100*expected_score + card_value(card)
