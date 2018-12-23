@@ -6,7 +6,7 @@ DECK = [n + s for s in SUITS for n in CARD_NAMES]
 
 
 def card_number(name):
-    return DECK.index(name[-2:].upper()) # map "10H" to "0H" for example.
+    return -1 if not name else DECK.index(name[-2:].upper()) # map "10H" to "0H" for example.
 
 
 def card_value(card):

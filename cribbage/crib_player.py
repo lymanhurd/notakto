@@ -1,5 +1,5 @@
 from crib_utils import card_value, merge
-from score import score, score_sequence
+from score import score, score_sequence, expected_crib
 
 def create_player(level=1):
     """Return a cribbage player of the requested level."""
@@ -38,15 +38,18 @@ class BasePlayer():
 
 
 class StandardPlayer(BasePlayer):
-    def discard(self, hand, unused_computer_dealt, unused_human_score, unused_player_score):
+    def discard(self, hand, computer_dealt, unused_human_score, unused_player_score):
         """Choose two cards to discard to crib from a hand of six.
 
         Pick two cards that maximize potential score (independent of crib)"""
         best_score = -1
         best_div = 0
+        crib_coeff = 1 if computer_dealt else -1
         for d in _DIVISIONS:
             total = 0
             for start in range(13):
+                discards = [hand[i] for i in range(6) if d[i]]
+                total += crib_coeff * expected_crib(discards, start)
                 total += score([hand[i] for i in range(6) if not d[i]], start)
             if total > best_score:
                 best_div = d

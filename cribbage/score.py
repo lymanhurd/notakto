@@ -8,15 +8,6 @@ from crib_utils import card_value
 PAIRS = (0, 0, 2, 6, 12, 0)
 
 
-def scores(hand, crib, start):
-    hs = score(hand, start)
-    if crib:
-        cs = score(crib, start, is_crib=True)
-        return hs, cs
-    else:
-        return (hs,)
-
-
 def score(hd, start, is_crib=False):
     assert len(hd) == 4
     hand = hd[:]
@@ -26,6 +17,7 @@ def score(hd, start, is_crib=False):
     for h in hand:
         if start_suit == h // 13 and h % 13 == 10:
             points += 1
+    logging.debug('nibs: %d', points)
     suit0 = hand[0] // 13
     # flush
     flush = True
@@ -38,19 +30,19 @@ def score(hd, start, is_crib=False):
             points += 5
         elif not is_crib:
             points += 4
-        logging.info('flush')
-    logging.info('1st score = %d' % points)
+    logging.debug('flush: %d' % points)
     # all subsequent clauses do not distinguish starter card form hand cards
     hand.append(start)
     # pairs, pair royals, double pair royal
     hist = 13 * [0]
     for h in hand:
         hist[h % 13] += 1
-    logging.info(hist)
+    logging.debug(hist)
     run = 0
     product = 1
     for n in hist:
         points += PAIRS[n]
+        logging.debug('pairs: = %d' % points)
         # a zero means a run is broken
         if n == 0:
             if run >= 3:
@@ -61,17 +53,16 @@ def score(hd, start, is_crib=False):
             product *= n
             run += 1
     if hist[-1] == 1 and run >= 3:
-        points += run * product        
-    logging.info('run = %d' % run)
-    logging.info('score = %d' % points)
+        points += run * product
+    logging.debug('runs: = %d' % points)
     # 15's
     points += 2 * _ways_to_make_sum(15, [card_value(h) for h in hand])
-    logging.info('final score = %d' % points)
+    logging.debug('fifteens: %d' % points)
     return points
 
 
 def score_sequence(seq):
-    logging.info('(1) seq = %s' % seq)
+    logging.debug('(1) seq = %s' % seq)
     # truncate
     count = 0
     start = 0
@@ -86,8 +77,8 @@ def score_sequence(seq):
         points += 2
 
     seq = seq[start:]
-    logging.info('(2) seq = %s' % seq)
-    logging.info('-points = %s' % points)
+    logging.debug('(2) seq = %s' % seq)
+    logging.debug('-points = %s' % points)
 
     # check for pair, pair royal, double pair royal
     cv = seq[-1] % 13
@@ -98,14 +89,14 @@ def score_sequence(seq):
         else:
             run += 1
     points += PAIRS[run]
-    logging.info('--points = %s' % points)
+    logging.debug('--points = %s' % points)
     # check for runs
     if len(seq) >= 3:
         for i in range(min(len(seq), 8), 2, -1):
             if _is_run(seq[-i:]):
                 points += i
                 break
-    logging.info('---points = %s' % points)
+    logging.debug('---points = %s' % points)
     return points
 
 
@@ -127,3 +118,5 @@ def _is_run(sub_seq):
         return False
     return True
 
+def expected_crib(discards, start):
+    return 0
