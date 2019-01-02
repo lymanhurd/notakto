@@ -2,6 +2,7 @@ from __future__ import division
 
 import logging
 
+from crib_expected_values import expected_crib
 from crib_utils import card_value
 
 # Number of points earned by 0-4 copies of the same card value.
@@ -10,7 +11,7 @@ PAIRS = (0, 0, 2, 6, 12, 0)
 
 def score(hd, start, is_crib=False):
     assert len(hd) == 4
-    hand = hd[:]
+    hand = list(hd[:])
     points = 0
     # nibs
     start_suit = start // 13
@@ -118,5 +119,3 @@ def _is_run(sub_seq):
         return False
     return True
 
-def expected_crib(discards, start):
-    return 0

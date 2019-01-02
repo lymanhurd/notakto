@@ -1,5 +1,9 @@
+"""Logic behind computer players."""
+
+from crib_expected_values import expected_crib
 from crib_utils import card_value, merge
-from score import score, score_sequence, expected_crib
+from score import score, score_sequence
+
 
 def create_player(level=1):
     """Return a cribbage player of the requested level."""
@@ -44,14 +48,14 @@ class StandardPlayer(BasePlayer):
         Pick two cards that maximize potential score (independent of crib)"""
         best_score = -1
         best_div = 0
-        crib_coeff = 1 if computer_dealt else -1
+        crib_coeff = 13 if computer_dealt else -13
         for d in _DIVISIONS:
             total = 0
             discards = [hand[i] for i in range(6) if d[i]]
             kept = [hand[i] for i in range(6) if not d[i]]
             for start in range(13):
-                total += crib_coeff * expected_crib(discards, start)
                 total += score(kept, start)
+            total += crib_coeff * expected_crib(discards)
             if total > best_score:
                 best_div = d
                 best_score = total
