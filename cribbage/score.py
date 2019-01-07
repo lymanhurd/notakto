@@ -2,7 +2,6 @@ from __future__ import division
 
 import logging
 
-from crib_expected_values import expected_crib
 from crib_utils import card_value
 
 # Number of points earned by 0-4 copies of the same card value.
@@ -32,7 +31,7 @@ def score(hd, start, is_crib=False):
         elif not is_crib:
             points += 4
     logging.debug('flush: %d' % points)
-    # all subsequent clauses do not distinguish starter card form hand cards
+    # all subsequent clauses do not distinguish starter card from hand cards
     hand.append(start)
     # pairs, pair royals, double pair royal
     hist = 13 * [0]

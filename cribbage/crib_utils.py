@@ -13,6 +13,17 @@ def card_value(card):
     return min(10, 1 + card % 13)
 
 
+def filter_valid(hand, seq):
+    cur_count = 0
+    for card in seq:
+        cur_count += card_value(card)
+        if cur_count == 31:
+            cur_count = 0
+        elif cur_count > 31:
+            cur_count = card_value(card)
+    return [c for c in hand if cur_count + card_value(c) <= 31]
+
+
 def merge(comp_cards, human_cards, computer_dealt):
     first = comp_cards if computer_dealt else human_cards
     second = human_cards if computer_dealt else comp_cards

@@ -1,8 +1,11 @@
 """Logic behind computer players."""
 
 from crib_expected_values import expected_crib
-from crib_utils import card_value, merge
+from crib_utils import card_value, filter_valid
 from score import score, score_sequence
+
+
+_RESPONSE_WEIGHT = 0  # probability of the best response to a played card
 
 
 def create_player(level=1):
@@ -25,30 +28,28 @@ _DIVISIONS = (
     (False, False, False, False, True, True))
 
 class BasePlayer():
-    def play(self, comp_cards, human_cards, hand, computer_dealt, unused_human_score,
-             unused_comp_score, unused_start_card):
-        _, cur_count = merge(comp_cards, human_cards, computer_dealt)
-        valid = [h for h in hand if card_value(h) + cur_count <= 31]
-        if not valid:
-            return 'go'
+    def next_card(self, hand, seq, is_dealer, dscore, pscore, start):
+        valid = filter_valid(hand, seq)
+        if len(valid) == 0:
+            return 0, True  # Go
         else:
-            return max(valid, key=card_value)
+            return max(valid, key=card_value), False
 
 
     # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
-    def discard(self, hand, computer_dealt, human_score, player_score):
+    def discard(self, hand, is_dealer, dscore, pscore):
         """Choose two cards to discard to crib from a hand of six."""
-        return hand[:2]
+        return hand[:2], hand[2:]
 
 
 class StandardPlayer(BasePlayer):
-    def discard(self, hand, computer_dealt, unused_human_score, unused_player_score):
+    def discard(self, hand, is_dealer, dscore, pscore):
         """Choose two cards to discard to crib from a hand of six.
 
-        Pick two cards that maximize potential score (independent of crib)"""
+        Pick two cards that maximize potential score"""
         best_score = -1
         best_div = 0
-        crib_coeff = 13 if computer_dealt else -13
+        crib_coeff = 13 if is_dealer else -13
         for d in _DIVISIONS:
             total = 0
             discards = [hand[i] for i in range(6) if d[i]]
@@ -57,18 +58,19 @@ class StandardPlayer(BasePlayer):
                 total += score(kept, start)
             total += crib_coeff * expected_crib(discards)
             if total > best_score:
-                best_div = d
+                best_discards = discards
+                best_kept = kept
                 best_score = total
-        return [hand[i] for i in range(6) if best_div[i]]
+        return best_discards, best_kept
 
-    def play(self, comp_cards, human_cards, hand, computer_dealt, unused_human_score,
-             unused_comp_score, unused_start_card):
-        merged, cur_count = merge(comp_cards, human_cards, computer_dealt)
-        valid = [h for h in hand if card_value(h) + cur_count <= 31]
-        if not valid:
-            return 'go'
+
+    def next_card(self, hand, seq, is_dealer, dscore, pscore, start):
+        valid = filter_valid(hand, seq)
+        if len(valid) == 0:
+            return 0, True  # Go
         else:
-            return max(valid, key=lambda c: self._priority(merged, c))
+            return max(valid, key=lambda c: self._priority(seq, c)), False
+
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
     def _priority(self, merged, card):
@@ -78,5 +80,5 @@ class StandardPlayer(BasePlayer):
             response_score = score_sequence(merged + [card, response])
             if response_score > best_response:
                 best_response = response
-        expected_score -= 0.3 * best_response
+        expected_score -= _RESPONSE_WEIGHT * best_response
         return 100*expected_score + card_value(card)
