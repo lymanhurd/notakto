@@ -6,11 +6,11 @@ class Deck():
 
     def __init__(self):
         random.seed('deterministic')
-        self.cards = list(range(52))
+        self.deck = list(range(52))
         self.idx = 0
 
     def shuffle(self):
-        random.shuffle(self.cards)
+        random.shuffle(self.deck)
 
     def deal(self, n):
         cards = self.deck[self.idx: self.idx + n]

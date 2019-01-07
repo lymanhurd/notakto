@@ -37,7 +37,7 @@ def play_game(deck, dealer, pone):
     while dscore < 121 and pscore < 121:
         dhand = deck.deal(6)
         phand = deck.deal(6)
-        start = deck.deal(1)
+        start = deck.deal(1)[0]
         dscore, pscore = play_hand(dealer, dhand, dscore, pone, phand, pscore, start)
     return int(dscore > pscore), dscore - pscore
 

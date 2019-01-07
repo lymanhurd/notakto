@@ -48,7 +48,6 @@ class StandardPlayer(BasePlayer):
 
         Pick two cards that maximize potential score"""
         best_score = -1
-        best_div = 0
         crib_coeff = 13 if is_dealer else -13
         for d in _DIVISIONS:
             total = 0

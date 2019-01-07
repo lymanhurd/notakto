@@ -16,12 +16,12 @@ def _assert_no_dups(cards):
 def cribbage_command(command, query):
     """Central method to control cribbage commands."""
     player = create_player()  # can optionally give level...defaults  to highest
-    comp_score = int(query.get('comp_score', 0))
-    human_score = int(query.get('human_score', 0))
+    dealer_score = int(query.get('dealer_score', 0))
+    pone_score = int(query.get('pone_score', 0))
     # needed for "play" and "score" methods.
     start_card = card_number(query.get('start', ''))
     # relevant to "discard" and "play"
-    computer_dealt = query.get('dealer', 'C').upper() == 'C'
+    is_dealer = query.get('dealer', 'C').upper() == 'C'
     # used by "discard", "play"
     hand = [card_number(c) for c in query.get('hand', '').split(',') if c]
 
@@ -29,15 +29,16 @@ def cribbage_command(command, query):
     if command.lower() == 'discard':
         assert len(hand) == 6
         _assert_no_dups(hand)
-        discards = player.discard(hand, computer_dealt, human_score, comp_score)
+        discards = player.discard(hand, is_dealer, dealer_score, pone_score)
         return ','.join([DECK[c] for c in discards])
     elif command.lower() == 'play':
-        comp_cards = [card_number(c) for c in query.get('comp_cards','').split(',') if c]
-        human_cards = [card_number(c) for c in query.get('human_cards','').split(',') if c]
-        assert len(comp_cards) + len(hand) == 4
-        _assert_no_dups(comp_cards + human_cards + hand + [start_card])
-        return DECK[player.play(comp_cards, human_cards, hand, computer_dealt,
-                                human_score, comp_score, start_card)]
+        hand = [card_number(c) for c in query.get('hand','').split(',') if c]
+        assert len(hand) == 4
+        seq = [card_number(c) for c in query.get('seq','').split(',') if c]
+        assert len(seq) < 8
+        _assert_no_dups(hand + [start_card])
+        _assert_no_dups(seq + [start_card])
+        return DECK[player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card)]
     elif command.lower() == 'score':  # score and sequence are convenience methods
         score_dict = {}
         hand1, hand2, crib = [], [], []
