@@ -7,7 +7,8 @@ from deck import Deck
 from score import score, score_sequence
 
 
-_NUM_GAMES = 1
+# actually we end up playng twice this many
+_NUM_GAMES = 100
 
 
 def playoff(player1, player2, num_games):
@@ -18,23 +19,26 @@ def playoff(player1, player2, num_games):
     wins, margin = 0, 0
     deck = Deck()
     for i in range(num_games):
-        deck.shuffle()
-
+        logging.info('play game 1')
         game_win, game_margin = play_game(deck, player1, player2)
         wins += game_win
         margin += game_margin
+        logging.info('(%d, %d)' % (wins, 2 * i - wins))
 
         # reverse roles
+        logging.info('play game 2')
         deck.reset()
         game_win, game_margin = play_game(deck, player2, player1)
         wins += 1 - game_win
         margin -= game_margin
+        logging.info('(%d, %d)' % (wins, 2 * i + 1 - wins))
     return wins, margin
 
 
 def play_game(deck, dealer, pone):
     dscore, pscore = 0, 0
     while dscore < 121 and pscore < 121:
+        deck.shuffle()
         dhand = deck.deal(6)
         phand = deck.deal(6)
         start = deck.deal(1)[0]
@@ -53,11 +57,11 @@ def play_hand(dealer, dhand, dscore, pone, phand, pscore, start):
     dscore, pscore = pegging(dealer, dhand, dscore, pone, phand, pscore, start)
     if dscore > 120 or pscore > 120:
         return dscore, pscore
-    pscore += score(phand)
+    pscore += score(phand, start)
     if pscore > 120:
         return dscore, pscore
-    dscore += score(dhand)
-    dscore += score(crib)
+    dscore += score(dhand, start)
+    dscore += score(crib, start, is_crib=True)
     return dscore, pscore
 
 
@@ -72,6 +76,8 @@ def pegging(dealer, dhand, dscore, pone, phand, pscore, start):
             pscore += score_sequence(seq)
             if pscore > 120:
                 return dscore, pscore
+        else:
+            seq = []
         card, go = dealer.next_card(dhand, seq, True, dscore, pscore, start)
         if not go:
             seq.append(card)
@@ -79,13 +85,15 @@ def pegging(dealer, dhand, dscore, pone, phand, pscore, start):
             dscore += score_sequence(seq)
             if dscore > 120:
                 return dscore, pscore
-            pscore += score_sequence(seq)
+        else:
+            seq = []
     return dscore, pscore
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     player1 = create_player(level=0)
     player2 = create_player(level=1)
     wins, margin = playoff(player1, player2, _NUM_GAMES)
-    logging.info('Win percentage = {} margin {}'.fmt((100.0 * wins)/_NUM_GAMES,
+    logging.info('Win percentage = {} margin {}'.format((100.0 * wins)/(2*_NUM_GAMES),
                  margin))

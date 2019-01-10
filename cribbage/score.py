@@ -5,7 +5,8 @@ import logging
 from crib_utils import card_value
 
 # Number of points earned by 0-4 copies of the same card value.
-PAIRS = (0, 0, 2, 6, 12, 0)
+# Includes placeholder values for 5-8.
+PAIRS = (0, 0, 2, 6, 12, 0, 0, 0, 0)
 
 
 def score(hd, start, is_crib=False):

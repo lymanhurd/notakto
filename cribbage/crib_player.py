@@ -1,5 +1,7 @@
 """Logic behind computer players."""
 
+import logging
+
 from crib_expected_values import expected_crib
 from crib_utils import card_value, filter_valid
 from score import score, score_sequence
@@ -47,7 +49,7 @@ class StandardPlayer(BasePlayer):
         """Choose two cards to discard to crib from a hand of six.
 
         Pick two cards that maximize potential score"""
-        best_score = -1
+        best_score = -9999
         crib_coeff = 13 if is_dealer else -13
         for d in _DIVISIONS:
             total = 0
@@ -74,10 +76,10 @@ class StandardPlayer(BasePlayer):
     # Pick highest scoring cards and resolve ties in favor of highest card.
     def _priority(self, merged, card):
         expected_score = score_sequence(merged + [card])
-        best_response = 0
-        for response in range(13):
-            response_score = score_sequence(merged + [card, response])
-            if response_score > best_response:
-                best_response = response
-        expected_score -= _RESPONSE_WEIGHT * best_response
+#        best_response = 0
+#        for response in range(13):
+#            response_score = score_sequence(merged + [card, response])
+#            if response_score > best_response:
+#                best_response = response
+#        expected_score -= _RESPONSE_WEIGHT * best_response
         return 100*expected_score + card_value(card)

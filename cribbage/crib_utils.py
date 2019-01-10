@@ -1,5 +1,7 @@
 """Helper routines for interfacing between web app and AI."""
 
+import logging
+
 SUITS = ['C', 'D', 'H', 'S']
 CARD_NAMES = ['A'] + [str(i) for i in range(2, 10)] + ['0', 'J', 'Q', 'K']
 DECK = [n + s for s in SUITS for n in CARD_NAMES]
