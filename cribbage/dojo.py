@@ -1,5 +1,8 @@
 """Framework for comparing two players."""
 
+from __future__ import division
+from __future__ import print_function
+
 import logging
 
 from crib_player import create_player
@@ -8,31 +11,46 @@ from score import score, score_sequence
 
 
 # actually we end up playng twice this many
-_NUM_GAMES = 100
+_NUM_GAMES = 1000
+_NUM_HANDS = 1000
 
 
-def playoff(player1, player2, num_games):
+def play_games(player1, player2, num_games):
+    # The stronger (new) player is assumed to go second so we record wins/margin
+    # from Player 2's point of view.
+
+    wins, margin = 0, 0
+    deck = Deck()
+    for i in range(num_games):
+        logging.debug('Game %d', i)
+        game_win, game_margin = play_game(deck, player1, player2)
+        wins += game_win
+        margin += game_margin
+        logging.debug('(%d, %d)', wins, i - wins)
+    return wins, margin
+
+
+def play_hands(player1, player2, num_hands):
     # The stronger (new) player is assumed to go second so we record wins/margin
     # from Player 2's point of view.
 
     # Play games twice once from each side.
-    wins, margin = 0, 0
-    deck = Deck()
-    for i in range(num_games):
-        logging.info('play game 1')
-        game_win, game_margin = play_game(deck, player1, player2)
-        wins += game_win
-        margin += game_margin
-        logging.info('(%d, %d)' % (wins, 2 * i - wins))
+    margin = 0
+    for i in range(num_hands):
+        deck = Deck()
+        logging.debug('Hand %d', i)
+        dhand = deck.deal(6)
+        phand = deck.deal(6)
+        start = deck.deal(1)[0]
 
-        # reverse roles
-        logging.info('play game 2')
-        deck.reset()
-        game_win, game_margin = play_game(deck, player2, player1)
-        wins += 1 - game_win
-        margin -= game_margin
-        logging.info('(%d, %d)' % (wins, 2 * i + 1 - wins))
-    return wins, margin
+        # Play hand with player2 as dealer.
+        dscore2, pscore1 = play_hand(player2, dhand, 0, player1, phand, 0, start)
+
+        # Play hand with player1 as dealer.
+        dscore1, pscore2 = play_hand(player1, dhand, 0, player2, phand, 0, start)
+        margin += (pscore2 - pscore1) + (dscore2 - dscore1)        
+        logging.debug('margin %d', margin)
+    return margin
 
 
 def play_game(deck, dealer, pone):
@@ -94,6 +112,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     player1 = create_player(level=0)
     player2 = create_player(level=1)
-    wins, margin = playoff(player1, player2, _NUM_GAMES)
-    logging.info('Win percentage = {} margin {}'.format((100.0 * wins)/(2*_NUM_GAMES),
-                 margin))
+    margin = play_hands(player1, player2, _NUM_HANDS)
+    print('Average margin ', margin/(2*_NUM_HANDS))

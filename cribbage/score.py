@@ -31,7 +31,7 @@ def score(hd, start, is_crib=False):
             points += 5
         elif not is_crib:
             points += 4
-    logging.debug('flush: %d' % points)
+    logging.debug('flush: %d', points)
     # all subsequent clauses do not distinguish starter card from hand cards
     hand.append(start)
     # pairs, pair royals, double pair royal
@@ -43,7 +43,7 @@ def score(hd, start, is_crib=False):
     product = 1
     for n in hist:
         points += PAIRS[n]
-        logging.debug('pairs: = %d' % points)
+        logging.debug('pairs: = %d', points)
         # a zero means a run is broken
         if n == 0:
             if run >= 3:
@@ -55,15 +55,15 @@ def score(hd, start, is_crib=False):
             run += 1
     if hist[-1] == 1 and run >= 3:
         points += run * product
-    logging.debug('runs: = %d' % points)
+    logging.debug('runs: = %d', points)
     # 15's
     points += 2 * _ways_to_make_sum(15, [card_value(h) for h in hand])
-    logging.debug('fifteens: %d' % points)
+    logging.debug('fifteens: %d', points)
     return points
 
 
 def score_sequence(seq):
-    logging.debug('(1) seq = %s' % seq)
+    logging.debug('(1) seq = %s', seq)
     # truncate
     count = 0
     start = 0
@@ -78,8 +78,8 @@ def score_sequence(seq):
         points += 2
 
     seq = seq[start:]
-    logging.debug('(2) seq = %s' % seq)
-    logging.debug('-points = %s' % points)
+    logging.debug('(2) seq = %s', seq)
+    logging.debug('-points = %s', points)
 
     # check for pair, pair royal, double pair royal
     cv = seq[-1] % 13
@@ -90,14 +90,14 @@ def score_sequence(seq):
         else:
             run += 1
     points += PAIRS[run]
-    logging.debug('--points = %s' % points)
+    logging.debug('--points = %d', points)
     # check for runs
     if len(seq) >= 3:
         for i in range(min(len(seq), 8), 2, -1):
             if _is_run(seq[-i:]):
                 points += i
                 break
-    logging.debug('---points = %s' % points)
+    logging.debug('---points = %d', points)
     return points
 
 

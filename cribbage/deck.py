@@ -2,11 +2,14 @@
 import logging
 import random
 
+from time import time
 
 class Deck():
 
-    def __init__(self):
-        random.seed('deterministic')
+    def __init__(self, seed=None):
+        self.seed = seed or str(time())
+        logging.debug('seed = %s', self.seed)
+        random.seed(self.seed)
         self.deck = list(range(52))
         self.shuffle()
         self.idx = 0
@@ -18,8 +21,6 @@ class Deck():
     def deal(self, n):
         cards = self.deck[self.idx: self.idx + n]
         self.idx += n
-        assert self.idx < 52
         return cards
 
-    def reset(self):
-        random.seed('deterministic')
+
