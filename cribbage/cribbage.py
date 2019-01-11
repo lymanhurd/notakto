@@ -29,7 +29,7 @@ def cribbage_command(command, query):
     if command.lower() == 'discard':
         assert len(hand) == 6
         _assert_no_dups(hand)
-        discards = player.discard(hand, is_dealer, dealer_score, pone_score)
+        discards, _  = player.discard(hand, is_dealer, dealer_score, pone_score)
         return ','.join([DECK[c] for c in discards])
     elif command.lower() == 'play':
         hand = [card_number(c) for c in query.get('hand','').split(',') if c]
@@ -38,7 +38,8 @@ def cribbage_command(command, query):
         assert len(seq) < 8
         _assert_no_dups(hand + [start_card])
         _assert_no_dups(seq + [start_card])
-        return DECK[player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card)]
+        card, go = player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card)
+        return 'go' if go else DECK[card]
     elif command.lower() == 'score':  # score and sequence are convenience methods
         score_dict = {}
         hand1, hand2, crib = [], [], []

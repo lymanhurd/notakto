@@ -19,7 +19,7 @@ def play_hand(player1, h1, score1, player2, h2, score2, start, player1_deals):
         discard2, hand2 = player1.discard(h2)
         crib = discard1 + discard2
 
-        logging.debug('H1: %s H2 Crib: %s' % (hand1, hand2, crib))
+        logging.debug('H1: %s H2 %s Crib: %s', hand1, hand2, crib)
         
 
         # score opponent's hand
