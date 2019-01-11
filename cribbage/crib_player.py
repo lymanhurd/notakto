@@ -74,7 +74,7 @@ class StandardPlayer(BasePlayer):
 
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
-    def _priority(self, seq card):
+    def _priority(self, seq, card):
         expected_score = score_sequence(seq + [card])
 #        best_response = 0
 #        for response in range(13):
