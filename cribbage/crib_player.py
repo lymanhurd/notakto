@@ -72,11 +72,11 @@ class StandardPlayer(BasePlayer):
 
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
-    def _priority(self, merged, card):
-        expected_score = score_sequence(merged + [card])
+    def _priority(self, seq, card):
+        expected_score = score_sequence(seq + [card])
         best_response = 0
         for response in range(13):
-            response_score = score_sequence(merged + [card, response])
+            response_score = score_sequence(seq + [card, response])
             if response_score > best_response:
                 best_response = response
         expected_score -= _RESPONSE_WEIGHT * best_response
