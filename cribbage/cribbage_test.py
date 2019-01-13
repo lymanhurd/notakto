@@ -37,6 +37,10 @@ class TestCribbage(unittest.TestCase):
     def test_sequence(self):
         query = {'seq': 'as,js,0s,5c,jd,5d'}
         self.assertEqual('2', cribbage_command('sequence', query))
+        query = {'seq': 'js,jd,0s,ac,ad,ah'}
+        self.assertEqual('2', cribbage_command('sequence', query))
+        query = {'seq': 'js,jd,as,8c,8d,8h'}
+        self.assertEqual('2', cribbage_command('sequence', query))        
 
 
 if __name__ == '__main__':

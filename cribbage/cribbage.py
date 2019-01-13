@@ -36,9 +36,10 @@ def cribbage_command(command, query):
         assert len(hand) == 4
         seq = [card_number(c) for c in query.get('seq','').split(',') if c]
         assert len(seq) < 8
+        new_start = query.get('new_start', 'False')
         _assert_no_dups(hand + [start_card])
         _assert_no_dups(seq + [start_card])
-        card, go = player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card)
+        card, go = player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card, bool(new_start))
         return 'go' if go else DECK[card]
     elif command.lower() == 'score':  # score and sequence are convenience methods
         score_dict = {}

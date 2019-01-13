@@ -15,12 +15,17 @@ def card_value(card):
     return min(10, 1 + card % 13)
 
 
-def filter_valid(hand, seq):
+def filter_valid(hand, seq, go):
     cur_count = 0
-    for card in seq:
-        cur_count += card_value(card)
-        if cur_count == 31:
-            cur_count = 0
-        elif cur_count > 31:
-            cur_count = card_value(card)
-    return [c for c in hand if cur_count + card_value(c) <= 31]
+    if not go:
+        for card in seq:
+            cur_count += card_value(card)
+            if cur_count == 31:
+                cur_count = 0
+            elif cur_count > 31:
+                cur_count = card_value(card)
+    return [c for c in hand if cur_count + card_value(c) <= 31 and c not in seq]
+
+
+def hand_string(hand):
+    return ' '.join(sorted([DECK[c] for c in hand]))
