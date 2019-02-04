@@ -23,23 +23,23 @@ def cribbage_command(command, query):
     # relevant to "discard" and "play"
     is_dealer = query.get('dealer', 'C').upper() == 'C'
     # used by "discard", "play"
-    hand = [card_number(c) for c in query.get('hand', '').split(',') if c]
+    player.hand = [card_number(c) for c in query.get('hand', '').split(',') if c]
 
     # Given six dealt cards, choose two to discard to the crib.
     if command.lower() == 'discard':
-        assert len(hand) == 6
-        _assert_no_dups(hand)
-        discards, _  = player.discard(hand, is_dealer, dealer_score, pone_score)
+        assert len(player.hand) == 6
+        _assert_no_dups(player.hand)
+        discards = player.discard(is_dealer, 0)
         return ','.join([DECK[c] for c in discards])
     elif command.lower() == 'play':
         hand = [card_number(c) for c in query.get('hand','').split(',') if c]
         assert len(hand) == 4
         seq = [card_number(c) for c in query.get('seq','').split(',') if c]
         assert len(seq) < 8
-        new_start = query.get('new_start', 'False')
+        new_start = query.get('new_start', 'False') == 'True' 
         _assert_no_dups(hand + [start_card])
         _assert_no_dups(seq + [start_card])
-        card, go = player.next_card(hand, seq, is_dealer, dealer_score, pone_score, start_card, bool(new_start))
+        card, go = player.next_card(seq, is_dealer, 0, start_card, new_start)
         return 'go' if go else DECK[card]
     elif command.lower() == 'score':  # score and sequence are convenience methods
         score_dict = {}

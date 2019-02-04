@@ -5,29 +5,28 @@ from __future__ import print_function
 
 import logging
 
-from crib_player import create_player
-from crib_utils import DECK, hand_string
+from crib_player import create_player, GameOver
+from crib_utils import DECK, hand_string, seq_count
 from deck import Deck
 from score import score, score_sequence
 
 
-# actually we end up playng twice this many
-_NUM_GAMES = 1
-_NUM_HANDS = 10000
+NUM_GAMES = 100
+NUM_HANDS = 2
 
 
 def play_games(player1, player2, num_games=1):
-    # The stronger (new) player is assumed to go second so we record wins/margin
-    # from Player 2's point of view.
-    wins, margin = 0, 0
+    first, second = player1, player2
     for i in range(num_games):
         logging.debug('Game %d', i)
-        game_win, game_margin = play_game(player1, player2)
-        wins += game_win
-        margin += game_margin
-        logging.debug('(%d, %d)', wins, i - wins)
-    return wins, margin
-
+        first_won = play_game(first, second)
+        if first_won:
+            logging.info('Player %s won', first.name)
+            logging.info('%s %d %s %d', first.name, first.score, second.name, second.score)
+            first, second = second, first
+        else:
+            logging.info('Player %s won', second.name)
+            logging.info('%s %d %s %d', first.name, first.score, second.name, second.score) 
 
 def play_hands(player1, player2, num_hands):
     # The stronger (new) player is assumed to go second so we record wins/margin
@@ -37,140 +36,116 @@ def play_hands(player1, player2, num_hands):
     margin = 0
     for i in range(num_hands):
         deck = Deck()
+
         logging.debug('Hand %d', i)
-        dhand = deck.deal(6)
-        phand = deck.deal(6)
+        player1.hand = deck.deal(6)
+        player2.hand = deck.deal(6)
         start = deck.deal(1)[0]
 
-        # Play hand with player2 as dealer.
-        dscore2, pscore1 = play_hand(player2, dhand, 0, player1, phand, 0, start)
+        # Play hands with player2 as dealer.
+        play_hand(player2, player1, start)
 
-        # Play hand with player1 as dealer.
-        dscore1, pscore2 = play_hand(player1, dhand, 0, player2, phand, 0, start)
-        margin += (pscore2 - pscore1) + (dscore2 - dscore1)        
+        # Play hands with player1 as dealer.
+        player1.hand, player2.hand = player2.hand, player1.hand
+        play_hand(player1, player2, start)
+
+        margin += player2.score - player1.score
+        player1.score, player2.score = 0, 0
         logging.debug('margin %d', margin)
     return margin
 
 
-def play_game(dealer, pone):
+def play_game(first, second):
+    first.score = 0
+    second.score = 0
+    dealer, pone = first, second
     deck = Deck()
-    dscore, pscore = 0, 0
-    while dscore < 121 and pscore < 121:
-        deck.shuffle()
-        dhand = deck.deal(6)
-        phand = deck.deal(6)
-        start = deck.deal(1)[0]
-        dscore, pscore = play_hand(dealer, dhand, dscore, pone, phand, pscore, start)
-    return int(dscore > pscore), dscore - pscore
+    hand = 1
+    try:
+        while first.score < 121 and second.score < 121:
+            logging.info('Hand %d', hand)
+            deck.shuffle()
+            dealer.hand = deck.deal(6)
+            pone.hand = deck.deal(6)
+            start = deck.deal(1)[0]
+            play_hand(dealer, pone, start)
+            dealer, pone = pone, dealer
+            hand += 1
+    except GameOver:
+        if first.score > second.score:
+            first.wins += 1
+        else:
+            second.wins += 1
 
 
-def play_hand(dealer, dhand, dscore, pone, phand, pscore, start):
+def play_hand(dealer, pone, start):
+    logging.info('Dealer %s %d Pone %s %d', dealer.name, dealer.score,
+                 pone.name, pone.score)
     logging.info('Start card: %s', DECK[start])
     if start % 13 == 10:  # his heels
-        dscore += 2
-        logging.info('Heels: dealer %d pone %d', dscore, pscore)
-        if dscore > 120:
-            return True, 2
+        dealer.add(2)
 
-    dcrib, dhand = dealer.discard(dhand, True, dscore, pscore)
-    logging.info('dealer hand %s discard %s', hand_string(dhand), hand_string(dcrib))
-    pcrib, phand = dealer.discard(phand, False, pscore, dscore)
-    logging.info('pone   hand %s discard %s\n', hand_string(phand), hand_string(pcrib))    
+    dcrib = dealer.discard(True, pone.score)
+    logging.info('dealer hand %s discard %s', hand_string(dealer.hand), hand_string(dcrib))
 
-    dscore, pscore = pegging(dealer, dhand, dscore, pone, phand, pscore, start)
+    pcrib  = pone.discard(False, dealer.score)
+    logging.info('pone   hand %s discard %s', hand_string(pone.hand), hand_string(pcrib))    
 
-    logging.info('Dealer %d Pone %d', dscore, pscore)
-    if dscore > 120 or pscore > 120:
-        return dscore, pscore
+    pegging(dealer, pone, start)
 
-    pscore += score(phand, start)
-    logging.info('pone   hand %s start %s score %d', hand_string(phand), DECK[start], pscore)
+    logging.info('%s %d %s %d', dealer.name, dealer.score, pone.name, pone.score)
+    sc = score(pone.hand, start)
+    logging.info('pone   hand %s start %s score %d', hand_string(pone.hand), DECK[start], sc)
+    pone.add(sc)
 
-    if pscore > 120:
-        return dscore, pscore
-
-    dscore += score(dhand, start)
-    logging.info('dealer hand %s start %s score %d', hand_string(dhand), DECK[start], dscore)
+    sc = score(dealer.hand, start)
+    logging.info('dealer hand %s start %s score %d', hand_string(dealer.hand), DECK[start], sc)
+    dealer.add(sc)
 
     crib = dcrib + pcrib
-    cscore = score(crib, start, is_crib=True)
-    dscore += cscore
-    logging.info('crib   hand %s start %s score %d\n', hand_string(crib), DECK[start], cscore)
+    sc = score(crib, start, is_crib=True)
+    logging.info('crib   hand %s start %s score %d', hand_string(crib), DECK[start], sc)
+    dealer.add(sc)
 
-    logging.info('DEALER %d PONE %d', dscore, pscore)    
-    return dscore, pscore
+    logging.info('DEALER(%s) %d PONE(%s) %d\n', dealer.name, dealer.score, pone.name, pone.score)    
 
 
-def pegging(dealer, dhand, dscore, pone, phand, pscore, start):
+def pegging(dealer, pone, start):
     seq = []
     cards_played = 0
-    go_count = 0
+    go = True
+    cur_count = 0
     while cards_played < 8:
-        # Pone
-        if go_count == 2:
-            card, go = pone.next_card(phand, seq, False, dscore, pscore, start, True)
-            go_count = 0
-        else:
-            card, go = pone.next_card(phand, seq, False, dscore, pscore, start, False)            
-        if go:
-            go_count += 1
-            if go_count == 1:
-                logging.info('pone   -> go (dealer +1)\n')
-                dscore += 1
-                logging.info('dealer %d pone %d', dscore, pscore)
-                if dscore > 120:
-                    return dscore, pscore                
-        else:
-            seq.append(card)
-            cardscore = score_sequence(seq)
-            logging.info('pone   -> %s (%d)', DECK[card], cardscore)
-            pscore += cardscore
-            if cardscore:
-                logging.info('dealer %d pone %d', dscore, pscore)
-            if pscore > 120:
-                return dscore, pscore
-            cards_played += 1
-            if cards_played == 8:
-                pscore += 1
-                logging.info('dealer %d pone %d', dscore, pscore)
-        # Dealer
-        if go_count == 2:
-            card, go = dealer.next_card(dhand, seq, False, dscore, pscore, start, True)
-            go_count = 0
-        else:
-            card, go = dealer.next_card(dhand, seq, False, dscore, pscore, start, False)
-        if go:
-            go_count += 1
-            if go_count == 1:
-                logging.info('dealer -> go (pone +1)\n')
-                pscore += 1
-                logging.info('dealer %d pone %d', dscore, pscore)
-                if pscore > 120:
-                    return dscore, pscore                
+        for player, opponent in ((pone, dealer), (dealer, pone)):
+            card, go = player.next_card(seq, cur_count)
+            
+            if go:
+                logging.info('%s says go', player.name)
+                if opponent.passed:
+                    # Score one for "last card" unless last card scored for 31.
+                    if cur_count > 0:
+                        logging.info('%s + 1 last card', player.name)
+                        player.add(1)
+                        cur_count = 0
             else:
-                logging.info('dealer -> go\n')
-        else:
-            seq.append(card)            
-            cardscore = score_sequence(seq)
-            logging.info('dealer -> %s (%d)', DECK[card], cardscore)
-            dscore += cardscore
-            if cardscore:
-                logging.info('dealer %d pone %d', dscore, pscore)            
-            if dscore > 120:
-                return dscore, pscore             
-            cards_played += 1
-            if cards_played == 8:
-                dscore += 1
-                if cardscore:
-                    logging.info('dealer %d pone %d', dscore, pscore)            
-    return dscore, pscore
+                seq.append(card)
+                cur_count = seq_count(seq)
+                cardscore = score_sequence(seq)
+                logging.info('%s %s score=%d cur_count=%d', player.name,
+                             DECK[card], cardscore, cur_count)
+                player.add(cardscore)
+                cards_played += 1
+                if cards_played == 8:
+                    logging.info('%s + 1 last (8th) card', player.name)
+                    player.add(1)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    player1 = create_player(level=0)
-    player2 = create_player(level=1)
-#    margin = play_hands(player1, player2, _NUM_HANDS)
-#    print('Average margin ', margin/(2*_NUM_HANDS))
-    wins, margin = play_games(player1, player2)
-    print('Average wins {} margin {}'.format(wins, margin))
+    player1 = create_player(level=0, name='level0')
+    player2 = create_player(level=1, name='level1')
+#    margin = play_hands(player1, player2, NUM_HANDS)
+#    print('Average margin ', margin/(2*NUM_HANDS))
+    play_games(player1, player2, NUM_GAMES)
+    assert NUM_GAMES == player1.wins + player2.wins
+    print('Player2 winning percentage {}'.format(100 * (player2.wins - player1.wins)/NUM_GAMES))
