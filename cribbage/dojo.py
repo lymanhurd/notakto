@@ -11,8 +11,8 @@ from deck import Deck
 from score import score, score_sequence
 
 
-NUM_GAMES = 100
-NUM_HANDS = 2
+NUM_GAMES = 1000
+# NUM_HANDS = 2
 
 
 def play_games(player1, player2, num_games=1):
@@ -41,7 +41,8 @@ def play_hands(player1, player2, num_hands):
         player1.hand = deck.deal(6)
         player2.hand = deck.deal(6)
         start = deck.deal(1)[0]
-
+        player1.start = start
+        player2.start = start
         # Play hands with player2 as dealer.
         play_hand(player2, player1, start)
 
@@ -68,6 +69,8 @@ def play_game(first, second):
             dealer.hand = deck.deal(6)
             pone.hand = deck.deal(6)
             start = deck.deal(1)[0]
+            dealer.start = start
+            pone.start = start
             play_hand(dealer, pone, start)
             dealer, pone = pone, dealer
             hand += 1
@@ -142,8 +145,8 @@ def pegging(dealer, pone, start):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    player1 = create_player(level=0, name='level0')
-    player2 = create_player(level=1, name='level1')
+    player1 = create_player(level=1, name='level1')
+    player2 = create_player(level=2, name='level2')
 #    margin = play_hands(player1, player2, NUM_HANDS)
 #    print('Average margin ', margin/(2*NUM_HANDS))
     play_games(player1, player2, NUM_GAMES)
