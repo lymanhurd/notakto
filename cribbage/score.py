@@ -62,7 +62,8 @@ def score(hd, start, is_crib=False):
     return points
 
 
-def score_sequence(seq):
+def score_sequence(sequence, card):
+    seq = sequence + [card]
     logging.debug('(1) seq = %s', seq)
     # truncate
     count = 0

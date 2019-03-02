@@ -1,5 +1,7 @@
 """Logic behind computer players."""
 
+from __future__ import division
+
 import logging
 
 from crib_expected_values import expected_crib
@@ -47,12 +49,16 @@ class BasePlayer():
     def next_card(self, seq, cur_count, **kwargs):
         valid = filter_valid(self.hand, seq, cur_count)
 
-        if len(valid) == 0:
+        num_valid = len(valid)
+        if num_valid == 0:
             self.passed = True
             return 0, True  # Go
         else:
             self.passed = False
-            return max(valid, key=lambda c: self._priority(c, seq)), False
+            if num_valid == 1:
+                return (valid[0], False)
+            else:
+                return (max(valid, key=lambda c: self._priority(c, seq)), False)
 
     # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
     def discard(self, is_dealer, unused_opponent_score):
@@ -67,6 +73,7 @@ class BasePlayer():
         if self.score > 120:
             raise GameOver()
 
+    # The "base" algorithm is to always play the highest count among legal cards.
     def _priority(self, card, unused_seq):
         return card_value(card)
         
@@ -98,27 +105,27 @@ class StandardPlayer(BasePlayer):
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
     def _priority(self, card, seq):
-        expected_score = score_sequence(seq + [card])
+        expected_score = score_sequence(seq, card)
         return 100*expected_score + card_value(card)
 
 
 class StandardPlusPlayer(StandardPlayer):
     # Pick highest scoring cards and resolve ties in favor of highest card.
-    # Account for possible opponent comeback.
+    # Account for possible opponent response.
     def _priority(self, card, seq):
-        expected_score = score_sequence(seq + [card])
+        expected_score = score_sequence(seq, card)
         # if len is 7 there is no next card
         if len(seq) >= 7:
-            return expected_score
+            return 100*expected_score + card_value(card)
 
         # compute the expected response
-        responses = [(response, score_sequence(seq + [card, response]))
+        responses = [(response, score_sequence((seq + [card]), response))
                      for response in range(13)]
         responses = [r for r in responses if r[1] > 0]
         responses.sort(key=lambda x: x[1], reverse=True)
 
-        logging.info('Seq = %s', [c % 13 for c in seq + [card]])
-        logging.info('Responses %s', responses)
+        logging.debug('Seq = %s', [c % 13 for c in seq + [card]])
+        logging.debug('Responses %s', responses)
 
         # to calculate how likely the opponent is to hold a given card we
         # figure out how many cards of that value have not been seen
@@ -127,32 +134,34 @@ class StandardPlusPlayer(StandardPlayer):
         assert len(seen_cards) == 7
         seen_cards = set(seen_cards + seq)  # Add the opponents cards.
 
-        logging.info('Cards seen %s', sorted([c % 13 for c in seen_cards]))
+        logging.debug('Cards seen %s', sorted([c % 13 for c in seen_cards]))
         num_cards_seen = len(seen_cards)
         opponents_cards_held =  11 - num_cards_seen  # 4 - (num_cards_seen - 7)
 
         # we know about our initial 6 cards and the start card
         # the difference has to be the opponent's
-        logging.info('opponents_cards_held %s', opponents_cards_held)
+        logging.debug('opponents_cards_held %s', opponents_cards_held)
 
         for c in seen_cards:
             seen_count[c % 13] += 1
-        card_probs = [(4 - s)/(52 - num_cards_seen) for s in seen_count]
-        logging.info('Card probabilities %s', card_probs)
 
         if opponents_cards_held > 0:
-            logging.info('Expected score %s', expected_score)
+            logging.debug('Expected score %s', expected_score)
             # we assume that the opponent will always make the play
             # that maximizes their score, so getting the second highest
             # score means that the opponent has that card and no better
             # card
-            p = 0
+            denominator = 52 - num_cards_seen
+            p = 1.0
             for r in responses:
-                p += card_probs[r[0]]
-                coeff = 1 - (1 - p)**opponents_cards_held
-                expected_score -= r[1] * coeff
-                logging.warning('r = %s p = %s coeff = %s cards = %s',
-                                r, p, coeff, opponents_cards_held)
-                logging.info('new expected score %s', expected_score)
+                numerator = (4 - seen_count[r[0]])/denominator 
+                q = (1 - numerator/denominator)**opponents_cards_held
+                expected_score -= p * r[1] * (1 - q)
+                # We are interested in the conditional probability of
+                # a card given that no "better" card has been found,
+                # hence we accumulate the probabilities that the previous
+                # cards turned up nothing.
+                denominator -= seen_count[r[0]]
+                p *= q
 
         return 100*expected_score + card_value(card)
