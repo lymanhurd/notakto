@@ -3,12 +3,12 @@
 import logging
 
 SUITS = ['C', 'D', 'H', 'S']
-CARD_NAMES = ['A'] + [str(i) for i in range(2, 10)] + ['0', 'J', 'Q', 'K']
-DECK = [n + s for s in SUITS for n in CARD_NAMES]
+CARD_NAMES = ['A'] + [str(i) for i in range(2, 11)] + ['J', 'Q', 'K']
+DECK = [n + s for n in CARD_NAMES for s in SUITS]
 
 
 def card_number(name):
-    return -1 if not name else DECK.index(name[-2:].upper()) # map "10H" to "0H" for example.
+    return -1 if not name else DECK.index(name.upper())
 
 
 def card_value(card):
@@ -31,4 +31,4 @@ def seq_count(seq):
 
 
 def hand_string(hand):
-    return ' '.join(sorted([DECK[c] for c in hand]))
+    return ' '.join([DECK[c] for c in hand])

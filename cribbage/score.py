@@ -2,7 +2,7 @@ from __future__ import division
 
 import logging
 
-from crib_utils import card_value
+from crib_utils import card_value, DECK
 
 # Number of points earned by 0-4 copies of the same card value.
 # Includes placeholder values for 5-8.
@@ -63,6 +63,7 @@ def score(hd, start, is_crib=False):
 
 
 def score_sequence(sequence, card):
+    logging.info('scoring: %s %s', [DECK[c] for c in sequence], DECK[card])
     seq = sequence + [card]
     logging.debug('(1) seq = %s', seq)
     # truncate

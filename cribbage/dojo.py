@@ -12,7 +12,7 @@ from score import score, score_sequence
 
 
 NUM_GAMES = 1
-NUM_HANDS = 500
+NUM_HANDS = 10000
 
 
 def play_games(player1, player2, num_games=1, alternate_start=True):
@@ -49,16 +49,21 @@ def play_hands(player1, player2, num_hands):
         player1.start, player1.hand = start, first_hand
         player2.start, player2.hand = start, second_hand
         play_hand(player2, player1, start)
+
         logging.info('Hand %d Player1 %d Player2 %d', i, player1.score, player2.score)
 
         # Play hands with player1 as dealer.
         player1.hand = second_hand
         player2.hand = first_hand
         play_hand(player1, player2, start)
+
         logging.info('Hand %d Player1 %d Player2 %d', i, player1.score, player2.score)
 
         margin += player2.score - player1.score
-        logging.info('current margin %d', margin)
+
+        if i % 100 == 0:
+            logging.warning('Hand %d current margin %d', i, margin)
+
     return margin
 
 
@@ -94,10 +99,10 @@ def play_hand(dealer, pone, start):
     if start % 13 == 10:  # his heels
         dealer.add(2)
 
-    dcrib = dealer.discard(True, pone.score)
+    dcrib = dealer.discard()
     logging.debug('dealer hand %s discard %s', hand_string(dealer.hand), hand_string(dcrib))
 
-    pcrib  = pone.discard(False, dealer.score)
+    pcrib  = pone.discard()
     logging.debug('pone   hand %s discard %s', hand_string(pone.hand), hand_string(pcrib))    
 
     pegging(dealer, pone, start)
@@ -151,9 +156,9 @@ def pegging(dealer, pone, start):
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    player1 = create_player(level=1, name='level1')
-    player2 = create_player(level=2, name='level2')
-    margin = play_hands(player1, player2, NUM_HANDS)
+    player1 = create_player(level=0, is_dealer=True)
+    player2 = create_player(level=2, is_dealer=False)
+    margin = play_hands(player1, player2, 1)
     print('Average margin ', margin/(2*NUM_HANDS))
     # play_games(player1, player2, NUM_GAMES)
     # assert NUM_GAMES == player1.wins + player2.wins

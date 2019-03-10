@@ -5,18 +5,20 @@ from __future__ import division
 import logging
 
 from crib_expected_values import expected_crib
-from crib_utils import card_value, filter_valid, seq_count
+from crib_utils import card_number, card_value, filter_valid, seq_count, hand_string
 from score import score, score_sequence
 
 
-def create_player(level=1, name=''):
+def create_player(level=2, is_dealer=True):
     """Return a cribbage player of the requested level."""
-    if level == 1:
-        return StandardPlayer(name)
-    elif level == 2:
-        return StandardPlusPlayer(name)
+    if level == 0:
+        return HumanPlayer(is_dealer)
+    elif level == 1:
+        return StandardPlayer(is_dealer)
+    elif level == 2 or level == -1:  # -1 signifies max
+        return StandardPlusPlayer(is_dealer)
     else:
-        return BasePlayer(name)
+        return BasicPlayer(is_dealer)
 
 
 _DIVISIONS = (
@@ -36,17 +38,84 @@ class GameOver(Exception):
     pass
 
 
-class BasePlayer():
-    def __init__(self, name):
-        self.name = name
+class BasePlayer(object):
+    DEFAULT_NAME = 'Base'
+
+    def __init__(self, is_dealer):
+        self.name = self.DEFAULT_NAME
         self.score = 0
-        self.wins = 0
         self.hand = []
         self.discarded = []
         self.passed = False
         self.start = 0
+        self.is_dealer = is_dealer
+
+    def add(self, points):
+        logging.info('Adding %s + %d', self.name, points)
+        self.score += points
+        if self.score > 120:
+            raise GameOver()
         
-    def next_card(self, seq, cur_count, **kwargs):
+    def must_pass(self, seq):
+        cur_count = seq_count(seq)
+        valid = filter_valid(self.hand, seq, cur_count)
+        return len(valid) == 0
+
+class HumanPlayer(BasePlayer):
+    DEFAULT_NAME = 'Human'
+
+    def discard(self):
+        """Choose two cards to discard to crib from a hand of six."""
+        assert len(self.hand) == 6
+        if self.is_dealer:
+            print("Your crib")
+        else:
+            print("Opponent's crib")            
+        print(hand_string(sorted(self.hand)))
+        d = input('Choose discards: ')
+        cards = [card_number(c) for c in d.split()]
+        while not self.discarded:
+            if (len(cards) != 2 or len(set(cards)) != 2 or
+                cards[0] not in self.hand or
+                cards[1] not in self.hand):
+                print('Need to discard two cards from hand')
+            else:
+                self.discarded = cards
+        self.hand.remove(self.discarded[0])
+        self.hand.remove(self.discarded[1])        
+        return self.discarded[:]
+
+    def next_card(self, seq, cur_count=-1, **kwargs):
+        cur_count = seq_count(seq)
+        valid = filter_valid(self.hand, seq, cur_count)
+        num_valid = len(valid)
+        print('Current sequence: %s' % hand_string(seq))
+
+        if num_valid == 0:
+            self.passed = True
+            return 0, True  # Go
+        else:
+            self.passed = False
+            if num_valid == 1:
+                return (valid[0], False)
+            else:
+                print(hand_string(sorted(valid)))
+                while True:
+                    d = input('Choose card to play: ')
+                    c = card_number(d) 
+                    if c in self.hand:
+                        self.hand.remove(c)
+                        return c, False
+                    else:
+                        print("Please choose a card in your hand.")
+
+
+class BasicPlayer(BasePlayer):
+    DEFAULT_NAME = 'Alpha'
+        
+    def next_card(self, seq, cur_count=-1, **kwargs):
+        if cur_count == -1:
+            cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
 
         num_valid = len(valid)
@@ -61,32 +130,28 @@ class BasePlayer():
                 return (max(valid, key=lambda c: self._priority(c, seq)), False)
 
     # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
-    def discard(self, is_dealer, unused_opponent_score):
+    def discard(self):
         """Choose two cards to discard to crib from a hand of six."""
         assert len(self.hand) == 6
         self.discarded = self.hand[:2]
         self.hand = self.hand[2:]
         return self.hand[:2]
 
-    def add(self, points):
-        self.score += points
-        if self.score > 120:
-            raise GameOver()
-
-    # The "base" algorithm is to always play the highest count among legal cards.
-    def _priority(self, card, unused_seq):
+    # The basic algorithm always plays the highest count among legal cards.
+    def _priority(self, card):
         return card_value(card)
-        
 
 
-class StandardPlayer(BasePlayer):
-    def discard(self, is_dealer, unused_opponent_score):
+class StandardPlayer(BasicPlayer):
+    DEFAULT_NAME = 'Beta'
+
+    def discard(self):
         """Choose two cards to discard to crib from a hand of six.
 
         Pick two cards that maximize potential score"""
         assert len(self.hand) == 6
         best_score = -9999
-        crib_coeff = 13 if is_dealer else -13
+        crib_coeff = 13 if self.is_dealer else -13
         for d in _DIVISIONS:
             total = 0
             discards = [self.hand[i] for i in range(6) if d[i]]
@@ -110,6 +175,8 @@ class StandardPlayer(BasePlayer):
 
 
 class StandardPlusPlayer(StandardPlayer):
+    DEFAULT_NAME = 'Gamma'
+
     # Pick highest scoring cards and resolve ties in favor of highest card.
     # Account for possible opponent response.
     def _priority(self, card, seq):

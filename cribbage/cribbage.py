@@ -29,7 +29,7 @@ def cribbage_command(command, query):
     if command.lower() == 'discard':
         assert len(player.hand) == 6
         _assert_no_dups(player.hand)
-        discards = player.discard(is_dealer, 0)
+        discards = player.discard(is_dealer)
         return ','.join([DECK[c] for c in discards])
     elif command.lower() == 'play':
         hand = [card_number(c) for c in query.get('hand','').split(',') if c]
