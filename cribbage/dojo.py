@@ -96,6 +96,9 @@ def play_hand(dealer, pone, start):
     logging.debug('Dealer %s %d Pone %s %d', dealer.name, dealer.score,
                  pone.name, pone.score)
     logging.debug('Start card: %s', DECK[start])
+    dealer.is_dealer = True
+    pone.is_dealer = False
+
     if start % 13 == 10:  # his heels
         dealer.add(2)
 
@@ -109,19 +112,19 @@ def play_hand(dealer, pone, start):
 
     logging.debug('%s %d %s %d', dealer.name, dealer.score, pone.name, pone.score)
     sc = score(pone.hand, start)
-    logging.debug('pone   hand %s start %s score %d', hand_string(pone.hand), DECK[start], sc)
+    logging.info('pone   hand %s start %s score %d', hand_string(pone.hand), DECK[start], sc)
     pone.add(sc)
 
     sc = score(dealer.hand, start)
-    logging.debug('dealer hand %s start %s score %d', hand_string(dealer.hand), DECK[start], sc)
+    logging.info('dealer hand %s start %s score %d', hand_string(dealer.hand), DECK[start], sc)
     dealer.add(sc)
 
     crib = dcrib + pcrib
     sc = score(crib, start, is_crib=True)
-    logging.debug('crib   hand %s start %s score %d', hand_string(crib), DECK[start], sc)
+    logging.info('crib   hand %s start %s score %d', hand_string(crib), DECK[start], sc)
     dealer.add(sc)
 
-    logging.debug('DEALER(%s) %d PONE(%s) %d\n', dealer.name, dealer.score, pone.name, pone.score)    
+    logging.info('DEALER(%s) %d PONE(%s) %d\n', dealer.name, dealer.score, pone.name, pone.score)    
 
 
 def pegging(dealer, pone, start):
@@ -134,7 +137,7 @@ def pegging(dealer, pone, start):
             card, go = player.next_card(seq, cur_count)
             
             if go:
-                logging.debug('%s says go', player.name)
+                logging.info('%s says go', player.name)
                 if opponent.passed:
                     # Score one for "last card" unless last card scored for 31.
                     if cur_count > 0:
@@ -142,6 +145,7 @@ def pegging(dealer, pone, start):
                         player.add(1)
                         cur_count = 0
             else:
+                print('Seq %s card %s' % (hand_string(seq), DECK[card]))
                 cardscore = score_sequence(seq, card)
                 seq.append(card)
                 cur_count = seq_count(seq)
@@ -150,14 +154,14 @@ def pegging(dealer, pone, start):
                 player.add(cardscore)
                 cards_played += 1
                 if cards_played == 8:
-                    logging.debug('%s + 1 last (8th) card', player.name)
+                    logging.info('%s + 1 last (8th) card', player.name)
                     player.add(1)
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
-    player1 = create_player(level=0, is_dealer=True)
-    player2 = create_player(level=2, is_dealer=False)
+    player1 = create_player(level=0)
+    player2 = create_player(level=2)
     margin = play_hands(player1, player2, 1)
     print('Average margin ', margin/(2*NUM_HANDS))
     # play_games(player1, player2, NUM_GAMES)

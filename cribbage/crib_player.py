@@ -51,9 +51,10 @@ class BasePlayer(object):
         self.is_dealer = is_dealer
 
     def add(self, points):
-        logging.info('Adding %s + %d', self.name, points)
+        logging.info('Adding %s + %d Total %s', self.name, points, self.score)
         self.score += points
         if self.score > 120:
+            logging.info('Game Over')
             raise GameOver()
         
     def must_pass(self, seq):
@@ -72,9 +73,9 @@ class HumanPlayer(BasePlayer):
         else:
             print("Opponent's crib")            
         print(hand_string(sorted(self.hand)))
-        d = input('Choose discards: ')
-        cards = [card_number(c) for c in d.split()]
         while not self.discarded:
+            d = input('Choose discards: ')
+            cards = [card_number(c) for c in d.split()]
             if (len(cards) != 2 or len(set(cards)) != 2 or
                 cards[0] not in self.hand or
                 cards[1] not in self.hand):

@@ -63,7 +63,7 @@ def score(hd, start, is_crib=False):
 
 
 def score_sequence(sequence, card):
-    logging.info('scoring: %s %s', [DECK[c] for c in sequence], DECK[card])
+    logging.debug('scoring: %s %s', [DECK[c] for c in sequence], DECK[card])
     seq = sequence + [card]
     logging.debug('(1) seq = %s', seq)
     # truncate
