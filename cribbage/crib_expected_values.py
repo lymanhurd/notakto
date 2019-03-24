@@ -1,12 +1,12 @@
 """Defines the approximate expected value for crib discards.'"""
-from typing import List
+from typing import Dict, List, Tuple
 
 
-def expected_crib(discards: List[int]):
+def expected_crib(discards: List[int]) -> float:
     return CRIB_EXPECTATION_TABLE[tuple(sorted([d % 13 for d in discards]))]
 
 
-CRIB_EXPECTATION_TABLE = {
+CRIB_EXPECTATION_TABLE: Dict[Tuple[int, ...], float] = {
     (0, 0): 5.869822,
     (0, 1): 4.647246,
     (0, 2): 4.786527,

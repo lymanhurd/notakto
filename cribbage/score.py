@@ -9,7 +9,7 @@ from typing import List
 PAIRS = (0, 0, 2, 6, 12, 0, 0, 0, 0)
 
 
-def score(hd: List[int], start: int, is_crib: bool = False):
+def score(hd: List[int], start: int, is_crib: bool = False) -> int:
     assert len(hd) == 4
     hand = list(hd[:])
     points = 0
@@ -62,7 +62,7 @@ def score(hd: List[int], start: int, is_crib: bool = False):
     return points
 
 
-def score_sequence(sequence, card):
+def score_sequence(sequence: List[int], card: int) -> int:
     logging.debug('scoring: %s %s', [DECK[c] for c in sequence], DECK[card])
     seq = sequence + [card]
     logging.debug('(1) seq = %s', seq)
@@ -103,7 +103,7 @@ def score_sequence(sequence, card):
     return points
 
 
-def _ways_to_make_sum(n, l):
+def _ways_to_make_sum(n: int, l: List[int]) -> int:
     if n <= 0 or len(l) == 0:
         return 0
     if l[0] == n:
@@ -112,7 +112,7 @@ def _ways_to_make_sum(n, l):
         return _ways_to_make_sum(n - l[0], l[1:]) + _ways_to_make_sum(n, l[1:])
 
 
-def _is_run(sub_seq):
+def _is_run(sub_seq: List[int]) -> bool:
     seq_len = len(sub_seq)
     val_seq = [value(s) for s in sub_seq]
     if max(val_seq) - min(val_seq) != seq_len - 1:

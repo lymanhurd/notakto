@@ -4,10 +4,9 @@ import logging
 from cribbage.crib_expected_values import expected_crib
 from cribbage.crib_utils import card_number, card_points, DECK, filter_valid, hand_string, seq_count, seq_string
 from cribbage.score import score, score_sequence
-from typing import List
+from typing import List, Tuple
 
-
-_DIVISIONS = (
+_DIVISIONS: Tuple[Tuple[int]] = (
     (True, True, False, False, False, False), (True, False, True, False, False, False),
     (True, False, False, True, False, False), (True, False, False, False, True, False),
     (True, False, False, False, False, True), (False, True, True, False, False, False),
@@ -49,15 +48,15 @@ class Player(object):
         valid = filter_valid(self.hand, seq, cur_count)
         return len(valid) == 0
 
-    def discard(self):
+    def discard(self) -> List[int]:
         raise NotImplementedError
 
-    def next_card(self, seq, **kwargs):
+    def next_card(self, seq, **kwargs) -> int:
         raise NotImplementedError
 
 
 class HumanPlayer(Player):
-    def discard(self):
+    def discard(self) -> List[int]:
         """Choose two cards to discard to crib from a hand of six."""
         assert len(self.hand) == 6
         self.discarded = []
@@ -75,7 +74,7 @@ class HumanPlayer(Player):
         self.hand.remove(self.discarded[1])        
         return self.discarded[:]
 
-    def next_card(self, seq, **kwargs):
+    def next_card(self, seq: List[int], **kwargs) -> int:
         cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
         num_valid = len(valid)
@@ -103,7 +102,7 @@ class HumanPlayer(Player):
 
 
 class BasicPlayer(Player):
-    def next_card(self, seq, **kwargs):
+    def next_card(self, seq: List[int], **kwargs) -> int:
         cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
         num_valid = len(valid)
@@ -124,7 +123,7 @@ class BasicPlayer(Player):
                 return max(valid, key=lambda c: self._priority(c, seq)), False
 
     # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
-    def discard(self):
+    def discard(self) -> List[int]:
         """Choose two cards to discard to crib from a hand of six."""
         assert len(self.hand) == 6
         self.discarded = self.hand[:2]
@@ -137,20 +136,20 @@ class BasicPlayer(Player):
 
 
 class StandardPlayer(BasicPlayer):
-    def discard(self):
+    def discard(self) -> List[int]:
         """Choose two cards to discard to crib from a hand of six.
 
         Pick two cards that maximize potential score"""
         assert len(self.hand) == 6
         best_score = -9999
-        crib_coeff = 13 if self.is_dealer else -13
+        crib_coefficient = 13 if self.is_dealer else -13
         for d in _DIVISIONS:
             total = 0
             discards = [self.hand[i] for i in range(6) if d[i]]
             kept = [self.hand[i] for i in range(6) if not d[i]]
             for start in range(13):
                 total += score(kept, start)
-            total += crib_coeff * expected_crib(discards)
+            total += crib_coefficient * expected_crib(discards)
             if total > best_score:
                 best_discards = discards
                 best_kept = kept
@@ -160,7 +159,7 @@ class StandardPlayer(BasicPlayer):
         return best_discards
 
     # Pick highest scoring cards and resolve ties in favor of highest card.
-    def _priority(self, card, seq):
+    def _priority(self, card: int, seq: List[int]) -> int:
         expected_score = score_sequence(seq, card)
         return 100 * expected_score + card_points(card)
 
@@ -168,7 +167,7 @@ class StandardPlayer(BasicPlayer):
 class StandardPlusPlayer(StandardPlayer):
     # Pick highest scoring cards and resolve ties in favor of highest card.
     # Account for possible opponent response.
-    def _priority(self, card, seq):
+    def _priority(self, card: int, seq: List[int]) -> int:
         expected_score = score_sequence(seq, card)
         # if len is 7 there is no next card
         if len(seq) >= 7:

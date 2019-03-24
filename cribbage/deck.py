@@ -3,6 +3,7 @@ import logging
 import random
 
 from time import time
+from typing import List
 
 
 class Deck(object):
@@ -14,11 +15,11 @@ class Deck(object):
         self.shuffle()
         self.idx = 0
 
-    def shuffle(self):
+    def shuffle(self) -> None:
         random.shuffle(self.deck)
         self.idx = 0
 
-    def deal(self, n: int):
+    def deal(self, n: int) -> List[int]:
         cards = self.deck[self.idx: self.idx + n]
         self.idx += n
         return cards

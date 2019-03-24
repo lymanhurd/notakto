@@ -1,11 +1,10 @@
 """Helper routines for interfacing between web app and cribbage AI."""
 from typing import List
 
-
-SUITS = ['C', 'D', 'H', 'S']
-CARD_NAMES = ['A'] + [str(i) for i in range(2, 11)] + ['J', 'Q', 'K']
-DECK = [n + s for n in CARD_NAMES for s in SUITS]
-JACK = 10
+SUITS: List[str] = ['C', 'D', 'H', 'S']
+CARD_NAMES: List[str] = ['A'] + [str(i) for i in range(2, 11)] + ['J', 'Q', 'K']
+DECK: List[str] = [n + s for n in CARD_NAMES for s in SUITS]
+JACK: int = 10
 
 
 def card_number(name: str) -> int:
@@ -16,11 +15,11 @@ def card_points(card: int) -> int:
     return min(10, 1 + (card // 4) % 13)
 
 
-def suit(card: int):
+def suit(card: int) -> int:
     return card % 4
 
 
-def value(card: int):
+def value(card: int) -> int:
     return (card // 4) % 13
 
 
