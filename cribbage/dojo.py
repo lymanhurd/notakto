@@ -1,21 +1,17 @@
 """Framework for comparing two players."""
-
-from __future__ import division
-from __future__ import print_function
-
 import logging
 
-from crib_player import create_player, GameOver
-from crib_utils import DECK, hand_string, seq_count
-from deck import Deck
-from score import score, score_sequence
+from cribbage.crib_player import create_player, GameOver, Player
+from cribbage.crib_utils import DECK, hand_string, JACK, seq_count, value
+from cribbage.deck import Deck
+from cribbage.score import score, score_sequence
 
 
 NUM_GAMES = 1
 NUM_HANDS = 10000
 
 
-def play_games(player1, player2, num_games=1, alternate_start=True):
+def play_games(player1: Player, player2: Player, num_games: int = 1, alternate_start: bool = True) -> None:
     first, second = player1, player2
     for i in range(num_games):
         logging.debug('Game %d', i)
@@ -31,8 +27,8 @@ def play_games(player1, player2, num_games=1, alternate_start=True):
                 first, second = second, first
 
 
-def play_hands(player1, player2, num_hands):
-    # The strongerplayer is assumed to go second so we record wins/margin
+def play_hands(player1: Player, player2: Player, num_hands: int) -> int:
+    # The stronger player is assumed to go second so we record wins/margin
     # from Player 2's point of view.
 
     # Play games twice once from each side.
@@ -46,28 +42,23 @@ def play_hands(player1, player2, num_hands):
         start = deck.deal(1)[0]
 
         # Play hands with player2 as dealer.        
-        player1.start, player1.hand = start, first_hand
-        player2.start, player2.hand = start, second_hand
+        player1.start, player1.hand = start, first_hand[:]
+        player2.start, player2.hand = start, second_hand[:]
         play_hand(player2, player1, start)
-
         logging.info('Hand %d Player1 %d Player2 %d', i, player1.score, player2.score)
 
         # Play hands with player1 as dealer.
-        player1.hand = second_hand
-        player2.hand = first_hand
+        player1.hand, player1.discarded = second_hand[:], []
+        player2.hand, player2.discarded = first_hand[:], []
         play_hand(player1, player2, start)
-
         logging.info('Hand %d Player1 %d Player2 %d', i, player1.score, player2.score)
-
         margin += player2.score - player1.score
-
         if i % 100 == 0:
             logging.warning('Hand %d current margin %d', i, margin)
-
     return margin
 
 
-def play_game(first, second):
+def play_game(first: Player, second: Player) -> bool:
     first.score = 0
     second.score = 0
     dealer, pone = first, second
@@ -90,80 +81,75 @@ def play_game(first, second):
             first.wins += 1
         else:
             second.wins += 1
+    return first.score > second.score
 
 
-def play_hand(dealer, pone, start):
-    logging.debug('Dealer %s %d Pone %s %d', dealer.name, dealer.score,
-                 pone.name, pone.score)
-    logging.debug('Start card: %s', DECK[start])
-    dealer.is_dealer = True
-    pone.is_dealer = False
+def play_hand(dealer: Player, pone: Player, start: int) -> None:
+    print('Dealer %s %d Pone %s %d' % (dealer.name, dealer.score,
+                                       pone.name, pone.score))
+    try:
+        dealer.is_dealer = True
+        pone.is_dealer = False
+        if value(start) == JACK:  # his heels
+            dealer.add(2)
+        dealer_discard = dealer.discard()
+        pone_discard = pone.discard()
+        print('Start card: %s' % DECK[start])
+        pegging(dealer, pone)
 
-    if start % 13 == 10:  # his heels
-        dealer.add(2)
+        sc = score(pone.hand, start)
+        print('pone   [%s] start %s score %d' % (hand_string(pone.hand), DECK[start], sc))
+        pone.add(sc)
 
-    dcrib = dealer.discard()
-    logging.debug('dealer hand %s discard %s', hand_string(dealer.hand), hand_string(dcrib))
+        sc = score(dealer.hand, start)
+        print('dealer [%s] start %s score %d' % (hand_string(dealer.hand), DECK[start], sc))
+        dealer.add(sc)
 
-    pcrib  = pone.discard()
-    logging.debug('pone   hand %s discard %s', hand_string(pone.hand), hand_string(pcrib))    
-
-    pegging(dealer, pone, start)
-
-    logging.debug('%s %d %s %d', dealer.name, dealer.score, pone.name, pone.score)
-    sc = score(pone.hand, start)
-    logging.info('pone   hand %s start %s score %d', hand_string(pone.hand), DECK[start], sc)
-    pone.add(sc)
-
-    sc = score(dealer.hand, start)
-    logging.info('dealer hand %s start %s score %d', hand_string(dealer.hand), DECK[start], sc)
-    dealer.add(sc)
-
-    crib = dcrib + pcrib
-    sc = score(crib, start, is_crib=True)
-    logging.info('crib   hand %s start %s score %d', hand_string(crib), DECK[start], sc)
-    dealer.add(sc)
-
-    logging.info('DEALER(%s) %d PONE(%s) %d\n', dealer.name, dealer.score, pone.name, pone.score)    
+        crib = dealer_discard + pone_discard
+        sc = score(crib, start, is_crib=True)
+        print('crib   [%s] start %s score %d' % (hand_string(crib), DECK[start], sc))
+        dealer.add(sc)
+        print('DEALER(%s) %d PONE(%s) %d\n' % (dealer.name, dealer.score, pone.name, pone.score))
+    except GameOver:
+        return
 
 
-def pegging(dealer, pone, start):
+def pegging(dealer: Player, pone: Player) -> None:
     seq = []
     cards_played = 0
-    go = True
-    cur_count = 0
     while cards_played < 8:
         for player, opponent in ((pone, dealer), (dealer, pone)):
-            card, go = player.next_card(seq, cur_count)
-            
+            card, go = player.next_card(seq)
+            opponent.opponent_passed = go
             if go:
-                logging.info('%s says go', player.name)
+                print('%s says go [%s]' % (player.name, hand_string(seq)))
                 if opponent.passed:
                     # Score one for "last card" unless last card scored for 31.
-                    if cur_count > 0:
-                        logging.debug('%s + 1 last card', player.name)
+                    if seq_count(seq) > 0:
+                        print('%s last card', player.name)
                         player.add(1)
-                        cur_count = 0
+                    break
             else:
-                print('Seq %s card %s' % (hand_string(seq), DECK[card]))
-                cardscore = score_sequence(seq, card)
+                print('%s plays %s [%s]' % (player.name, DECK[card], hand_string(seq)))
+                card_score = score_sequence(seq, card)
                 seq.append(card)
-                cur_count = seq_count(seq)
                 logging.debug('%s %s score=%d cur_count=%d', player.name,
-                             DECK[card], cardscore, cur_count)
-                player.add(cardscore)
+                              DECK[card], card_score, seq_count(seq))
+                player.add(card_score)
                 cards_played += 1
                 if cards_played == 8:
-                    logging.info('%s + 1 last (8th) card', player.name)
+                    print('%s + 1 last (8th) card' % player.name)
                     player.add(1)
+                    break
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    player1 = create_player(level=0)
-    player2 = create_player(level=2)
-    margin = play_hands(player1, player2, 1)
-    print('Average margin ', margin/(2*NUM_HANDS))
+    logging.basicConfig(level=logging.WARNING)
+    score_sequence([20, 32, 42, 21, 25], 26)
+    p1 = create_player(level=0)
+    p2 = create_player(level=2)
+    m = play_hands(p1, p2, 1)
+    print('Average margin ', m / (2 * 1))
     # play_games(player1, player2, NUM_GAMES)
     # assert NUM_GAMES == player1.wins + player2.wins
     # print('Player2 winning percentage {}'.format(100 * (player2.wins - player1.wins)/NUM_GAMES))

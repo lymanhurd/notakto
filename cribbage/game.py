@@ -4,10 +4,10 @@ import json
 import logging
 import threading
 
-from crib_player import create_player, GameOver
-from crib_utils import card_number, card_value, DECK, hand_string, seq_count
-from deck import Deck
-from score import score, score_sequence
+from cribbage.crib_player import create_player, GameOver
+from cribbage.crib_utils import card_number, card_points, DECK, hand_string, seq_count
+from cribbage.deck import Deck
+from cribbage.score import score, score_sequence
 
 
 class IllegalMoveException(Exception):
@@ -45,11 +45,12 @@ class Game(object):
         self.start = None
         self.sequence = []
         self.hand_number = 0
+        self.crib = []
 
-    def game_over(self):
+    def game_over(self) -> bool:
         return self.player.score > 120 or self.opponent.score > 120
 
-    def new_hand(self):
+    def new_hand(self) -> None:
         assert not self.game_over()
         self.hand_number += 1
         self.sequence = []
@@ -60,38 +61,38 @@ class Game(object):
         # swap dealer
         self.player.is_dealer = not self.player.is_dealer
         self.opponent.is_dealer = not self.opponent.is_dealer
-                
-    def end_of_hand(self):
+
+    def end_of_hand(self) -> None:
         logging.info('End of hand.')
         assert not self.game_over()
-        self.crib = self.player.discards + self.opponent.discards
+        self.crib = self.player.discarded + self.opponent.discarded
         if self.player.is_dealer:
             pone, dealer = self.opponent, self.player
         else:
             dealer, pone = self.player, self.opponent
         try:
             # score in order pone, dealer, crib
-            pone.add(score(pone.hand, self.starter))
-            dealer.add(score(dealer.hand, self.starter))
-            dealer.add(score(self.crib, self.starter, is_crib=True))
+            pone.add(score(pone.hand, self.start))
+            dealer.add(score(dealer.hand, self.start))
+            dealer.add(score(self.crib, self.start, is_crib=True))
         except GameOver:
             return
-        new_hand()
+        self.new_hand()
 
-    def discard(self, cards):
+    def discard(self, cards) -> None:
         assert not self.game_over()
         if len(self.player.hand) != 6:
-            raise IllegalMoveException('Game is not in the discard phase')            
+            raise IllegalMoveException('Game is not in the discard phase')
         if (len(cards) != 2 or len(set(cards)) != 2 or
-            cards[0] not in self.player.hand or
-            cards[1] not in self.player.hand):
+                cards[0] not in self.player.hand or
+                cards[1] not in self.player.hand):
             raise IllegalMoveException('Need to discard two cards from hand')
         self.player.discarded = cards
         self.player.hand.remove(cards[0])
         self.player.hand.remove(cards[1])
         self.opponent.discard()
-        
-    def play_card(self, card):
+
+    def play_card(self, card) -> None:
         assert not self.game_over()        
         # check for legality
         if len(self.player.hand) != 4 or self.game_over():
@@ -99,7 +100,7 @@ class Game(object):
         if card not in self.player.hand:
             raise IllegalMoveException('Need to play a card from hand')
         cur_count = seq_count(self.sequence)
-        if cur_count + card_value(card) > 31:
+        if cur_count + card_points(card) > 31:
             raise IllegalMoveException('Illegal card %s' % DECK[card])
 
         # add card to sequence and score it
@@ -110,7 +111,6 @@ class Game(object):
             return
 
         # make computer's move
-        humans_move = False
         last_move = False
         try:
             while len(self.sequence) < 8:
@@ -129,13 +129,13 @@ class Game(object):
         except GameOver:
             return
         # if we get this far, the hand is over.
-        end_of_hand()
+        self.end_of_hand()
 
     # express game statistics as a string
     def game_object(self):
         d = {}
         d['id'] = self.id
-        d['is_dealer'] = self.is_dealer
+        d['is_dealer'] = self.player.is_dealer
         d['hand_number'] = self.hand_number        
         d['name'] = [self.player.name, self.opponent.name]
         d['score'] = [self.player.score, self.opponent.score]
@@ -162,4 +162,3 @@ if __name__ == '__main__':
         print('Sequence: %s' % hand_string(game.sequence))
         print('Scores (player %d computer %d)' % (game.player.score,
                                                   game.opponent.score))
-        

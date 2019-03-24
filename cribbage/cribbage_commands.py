@@ -3,17 +3,18 @@
 import logging
 
 from bottle import abort
-from crib_player import create_player
-from crib_utils import DECK, card_number
-from score import score, score_sequence
+from cribbage.crib_player import create_player
+from cribbage.crib_utils import DECK, card_number
+from cribbage.score import score, score_sequence
+from typing import List, Any
 
 
-def _assert_no_dups(cards):
+def _assert_no_dups(cards: List[int]) -> None:
     logging.debug('dupes checking %s', cards)
     assert len(cards) == len(set(cards))
 
 
-def cribbage_command(command, query):
+def cribbage_command(command: str, query: Any):
     """Central method to control cribbage commands."""
     player = create_player()  # can optionally give level...defaults  to highest
     dealer_score = int(query.get('dealer_score', 0))
@@ -29,7 +30,7 @@ def cribbage_command(command, query):
     if command.lower() == 'discard':
         assert len(player.hand) == 6
         _assert_no_dups(player.hand)
-        discards = player.discard(is_dealer)
+        discards = player.discard()
         return ','.join([DECK[c] for c in discards])
     elif command.lower() == 'play':
         hand = [card_number(c) for c in query.get('hand','').split(',') if c]

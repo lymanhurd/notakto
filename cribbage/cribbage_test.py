@@ -4,8 +4,7 @@
 import logging
 import unittest
 
-from cribbage import cribbage_command
-
+from cribbage.cribbage_commands import cribbage_command
 
 _SCORE_TESTING = (('5c,5d,5h,js', '5s', 29),
                   ('5c,5d,5h,ks', '5s', 28),
@@ -14,7 +13,7 @@ _SCORE_TESTING = (('5c,5d,5h,js', '5s', 29),
                   ('7c,7d,8d,9h', '8s', 24),
                   ('4c,5c,5d,6h', '5s', 23),
                   ('5c,5d,kd,kh', '5s', 22),
-                 )
+                  )
 
 
 class TestCribbage(unittest.TestCase):

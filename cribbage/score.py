@@ -1,29 +1,29 @@
-from __future__ import division
-
+"""Utilities for scoring hands and sequences."""
 import logging
 
-from crib_utils import card_value, DECK
+from cribbage.crib_utils import card_points, DECK, JACK, suit, value
+from typing import List
 
 # Number of points earned by 0-4 copies of the same card value.
 # Includes placeholder values for 5-8.
 PAIRS = (0, 0, 2, 6, 12, 0, 0, 0, 0)
 
 
-def score(hd, start, is_crib=False):
+def score(hd: List[int], start: int, is_crib: bool = False):
     assert len(hd) == 4
     hand = list(hd[:])
     points = 0
     # nibs
-    start_suit = start // 13
+    start_suit = suit(start)
     for h in hand:
-        if start_suit == h // 13 and h % 13 == 10:
+        if start_suit == suit(h) and value(h) == JACK:
             points += 1
     logging.debug('nibs: %d', points)
-    suit0 = hand[0] // 13
+    suit0 = suit(hand[0])
     # flush
     flush = True
     for h in hand[1:]:
-        if h // 13 != suit0:
+        if suit(h) != suit0:
             flush = False
             break
     if flush:
@@ -37,7 +37,7 @@ def score(hd, start, is_crib=False):
     # pairs, pair royals, double pair royal
     hist = 13 * [0]
     for h in hand:
-        hist[h % 13] += 1
+        hist[value(h)] += 1
     logging.debug(hist)
     run = 0
     product = 1
@@ -57,7 +57,7 @@ def score(hd, start, is_crib=False):
         points += run * product
     logging.debug('runs: = %d', points)
     # 15's
-    points += 2 * _ways_to_make_sum(15, [card_value(h) for h in hand])
+    points += 2 * _ways_to_make_sum(15, [card_points(h) for h in hand])
     logging.debug('fifteens: %d', points)
     return points
 
@@ -71,10 +71,10 @@ def score_sequence(sequence, card):
     start = 0
     points = 0
     for i, c in enumerate(seq):
-        if card_value(c) + count <= 31:
-            count += card_value(c)
+        if card_points(c) + count <= 31:
+            count += card_points(c)
         else:
-            count = card_value(c)
+            count = card_points(c)
             start = i
     if count == 15 or count == 31:
         points += 2
@@ -84,10 +84,10 @@ def score_sequence(sequence, card):
     logging.debug('-points = %s', points)
 
     # check for pair, pair royal, double pair royal
-    cv = seq[-1] % 13
+    cv = value(seq[-1])
     run = 1
     for s in reversed(seq[:-1]):
-        if cv != s % 13:
+        if cv != value(s):
             break
         else:
             run += 1
@@ -114,7 +114,7 @@ def _ways_to_make_sum(n, l):
 
 def _is_run(sub_seq):
     seq_len = len(sub_seq)
-    val_seq = [s % 13 for s in sub_seq]
+    val_seq = [value(s) for s in sub_seq]
     if max(val_seq) - min(val_seq) != seq_len - 1:
         return False
     if len(set(val_seq)) != seq_len:

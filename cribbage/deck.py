@@ -4,8 +4,8 @@ import random
 
 from time import time
 
-class Deck():
 
+class Deck(object):
     def __init__(self, seed=None):
         self.seed = seed or str(time())
         logging.debug('seed = %s', self.seed)
@@ -18,7 +18,7 @@ class Deck():
         random.shuffle(self.deck)
         self.idx = 0
 
-    def deal(self, n):
+    def deal(self, n: int):
         cards = self.deck[self.idx: self.idx + n]
         self.idx += n
         return cards
