@@ -2,7 +2,7 @@
 import logging
 
 from cribbage.crib_expected_values import expected_crib
-from cribbage.crib_utils import card_number, card_points, DECK, filter_valid, seq_count, hand_string
+from cribbage.crib_utils import card_number, card_points, DECK, filter_valid, hand_string, seq_count, seq_string
 from cribbage.score import score, score_sequence
 from typing import List
 
@@ -36,9 +36,9 @@ class Player(object):
         self.is_dealer: bool = is_dealer
         self.wins = 0
 
-    def add(self, points: int) -> None:
+    def add(self, points: int, verbose: bool = True) -> None:
         self.score += points
-        if points:
+        if points and verbose:
             print('Adding %s + %d Total %s' % (self.name, points, self.score))
         if self.score > 120:
             print('Game Over')
@@ -63,7 +63,7 @@ class HumanPlayer(Player):
         self.discarded = []
         while not self.discarded:
             whose = "Your" if self.is_dealer else "Opponent's"
-            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(sorted(self.hand))))
+            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(self.hand)))
             cards = [card_number(c) for c in d.split()]
             if (len(cards) != 2 or len(set(cards)) != 2 or
                     cards[0] not in self.hand or
@@ -94,7 +94,7 @@ class HumanPlayer(Player):
             else:
                 while True:
                     d = input('Choose card: seq [%s] hand [%s]: ' %
-                              (hand_string(seq), hand_string(sorted(valid))))
+                              (seq_string(seq), hand_string(valid)))
                     c = card_number(d) 
                     if c in self.hand:
                         return c, False

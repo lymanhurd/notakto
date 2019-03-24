@@ -39,5 +39,9 @@ def seq_count(seq: List[int]) -> int:
     return cur_count
 
 
+def seq_string(seq: List[int]) -> str:
+    return ' '.join([DECK[c] for c in seq])
+
+
 def hand_string(hand: List[int]) -> str:
-    return ' '.join([DECK[c] for c in hand])
+    return seq_string(sorted(hand))

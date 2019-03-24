@@ -5,7 +5,7 @@ import logging
 import threading
 
 from cribbage.crib_player import create_player, GameOver
-from cribbage.crib_utils import card_number, card_points, DECK, hand_string, seq_count
+from cribbage.crib_utils import card_number, card_points, DECK, seq_string, seq_count
 from cribbage.deck import Deck
 from cribbage.score import score, score_sequence
 
@@ -151,14 +151,14 @@ if __name__ == '__main__':
     id = start_game()
     game = get_game(id)
     game.new_hand()
-    print(hand_string(sorted(game.player.hand)))
+    print(seq_string(sorted(game.player.hand)))
     d = input('Choose discards: ')
     discards = [card_number(c) for c in d.split()]
     game.discard(discards)
     while not game.game_over():
-        print(hand_string(sorted([c for c in game.player.hand if c not in game.sequence])))
+        print(seq_string(sorted([c for c in game.player.hand if c not in game.sequence])))
         d = input('Choose card to play: ')
         game.play_card(card_number(d))
-        print('Sequence: %s' % hand_string(game.sequence))
+        print('Sequence: %s' % seq_string(game.sequence))
         print('Scores (player %d computer %d)' % (game.player.score,
                                                   game.opponent.score))
