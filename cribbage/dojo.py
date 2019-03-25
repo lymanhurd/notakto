@@ -2,8 +2,8 @@
 import logging
 
 from cribbage.crib_player import create_player, GameOver, Player
-from cribbage.crib_utils import DECK, hand_string, JACK, seq_count, seq_string, value
-from cribbage.deck import Deck
+from cribbage.crib_utils import seq_count
+from cribbage.deck import Deck, DECK, JACK, value, seq_string, hand_string
 from cribbage.score import score, score_sequence
 
 
@@ -142,7 +142,6 @@ def pegging(dealer: Player, pone: Player) -> None:
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)
-    score_sequence([20, 32, 42, 21, 25], 26)
     p1 = create_player(level=0)
     p2 = create_player(level=2)
     m = play_hands(p1, p2, NUM_HANDS)

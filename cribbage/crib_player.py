@@ -2,7 +2,8 @@
 import logging
 
 from cribbage.crib_expected_values import expected_crib
-from cribbage.crib_utils import card_number, card_points, DECK, filter_valid, hand_string, seq_count, seq_string
+from cribbage.crib_utils import filter_valid, seq_count
+from cribbage.deck import DECK, card_number, card_points, seq_string, hand_string
 from cribbage.score import score, score_sequence
 from typing import List, Tuple
 

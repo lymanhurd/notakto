@@ -1,7 +1,7 @@
 """Utilities for scoring hands and sequences."""
 import logging
 
-from cribbage.crib_utils import card_points, DECK, JACK, suit, value
+from cribbage.deck import DECK, JACK, card_points, suit, value
 from typing import List
 
 # Number of points earned by 0-4 copies of the same card value.
@@ -113,6 +113,10 @@ def _ways_to_make_sum(n: int, l: List[int]) -> int:
 
 
 def _is_run(sub_seq: List[int]) -> bool:
+    """
+
+    :rtype: bool
+    """
     seq_len = len(sub_seq)
     val_seq = [value(s) for s in sub_seq]
     if max(val_seq) - min(val_seq) != seq_len - 1:

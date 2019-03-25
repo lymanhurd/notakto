@@ -1,26 +1,7 @@
 """Helper routines for interfacing between web app and cribbage AI."""
 from typing import List
 
-SUITS: List[str] = ['C', 'D', 'H', 'S']
-CARD_NAMES: List[str] = ['A'] + [str(i) for i in range(2, 11)] + ['J', 'Q', 'K']
-DECK: List[str] = [n + s for n in CARD_NAMES for s in SUITS]
-JACK: int = 10
-
-
-def card_number(name: str) -> int:
-    return -1 if not name else DECK.index(name.upper())
-
-
-def card_points(card: int) -> int:
-    return min(10, 1 + (card // 4) % 13)
-
-
-def suit(card: int) -> int:
-    return card % 4
-
-
-def value(card: int) -> int:
-    return (card // 4) % 13
+from cribbage.deck import card_points
 
 
 def filter_valid(hand: List[int], seq: List[int], cur_count: int) -> List[int]:
@@ -38,9 +19,3 @@ def seq_count(seq: List[int]) -> int:
     return cur_count
 
 
-def seq_string(seq: List[int]) -> str:
-    return ' '.join([DECK[c] for c in seq])
-
-
-def hand_string(hand: List[int]) -> str:
-    return seq_string(sorted(hand))

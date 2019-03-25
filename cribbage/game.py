@@ -5,9 +5,10 @@ import logging
 import threading
 
 from cribbage.crib_player import create_player, GameOver
-from cribbage.crib_utils import card_number, card_points, DECK, seq_string, seq_count
-from cribbage.deck import Deck
+from cribbage.crib_utils import seq_count
+from cribbage.deck import Deck, DECK, card_number, card_points, seq_string
 from cribbage.score import score, score_sequence
+from typing import Dict
 
 
 class IllegalMoveException(Exception):
@@ -16,25 +17,25 @@ class IllegalMoveException(Exception):
 
 # Dictionary containing all active games (to be replaced with a database).
 # Maps from game_id to game object.
-GAME_DICT = {0: None}
+GAME_DICT: Dict[int, Game] = {0: None}
 LOCK = threading.Lock()
 
 
 # Create a new game (need a lock to avoid duplicating ids).
-def start_game(level=-1):
+def start_game(level: int = 1):
     with LOCK:
         game_id = max(GAME_DICT.keys()) + 1
         GAME_DICT[game_id] = Game(level, id)
     return game_id
 
 
-def get_game(id):
-    return GAME_DICT.get(id, None)
+def get_game(game_id: int):
+    return GAME_DICT.get(game_id, None)
 
 
 class Game(object):
-    def __init__(self, level, id, is_dealer=True):
-        self.id = id
+    def __init__(self, level: int, game_id: int, is_dealer: bool = True):
+        self.id = game_id
         self.player = create_player(0)
         self.opponent = create_player(level)
 
