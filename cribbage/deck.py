@@ -3,11 +3,11 @@ import logging
 import random
 
 from time import time
-from typing import List
+from typing import List, Optional, Tuple
 
 
 class Deck(object):
-    def __init__(self, seed=None):
+    def __init__(self, seed: Optional[str] = None):
         self.seed = seed or str(time())
         logging.debug('seed = %s', self.seed)
         random.seed(self.seed)
@@ -53,3 +53,10 @@ def seq_string(seq: List[int]) -> str:
 
 def hand_string(hand: List[int]) -> str:
     return seq_string(sorted(hand))
+
+
+def random_draw() -> Tuple[int, int]:
+    c1, c2 = 0, 0
+    while value(c1) == value(c2):
+        c1, c2 = random.randint(0, 51), random.randint(0, 51)
+    return c1, c2

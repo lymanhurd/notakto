@@ -3,7 +3,7 @@ import logging
 
 from cribbage.crib_expected_values import expected_crib
 from cribbage.crib_utils import filter_valid, seq_count
-from cribbage.deck import DECK, card_number, card_points, seq_string, hand_string
+from cribbage.deck import card_number, card_points, seq_string, hand_string
 from cribbage.score import score, score_sequence
 from typing import List, Tuple
 
@@ -30,7 +30,7 @@ class IllegalMOve(Exception):
 
 
 class Player(object):
-    def __init__(self, is_dealer):
+    def __init__(self):
         self.name: str = type(self).__name__
         self.score: int = 0
         self.hand: List[int] = []
@@ -38,21 +38,18 @@ class Player(object):
         self.passed: bool = False
         self.opponent_passed: bool = False
         self.start: int = 0
-        self.is_dealer: bool = is_dealer
-        self.wins = 0
+        self.is_dealer: bool = False
+        self.wins: int = 0
 
-    def add(self, points: int, verbose: bool = True) -> None:
+    def add(self, points: int) -> None:
         self.score += points
-        if points and verbose:
-            logging.debug('Adding %s + %d Total %s' % (self.name, points, self.score))
         if self.score > 120:
-            logging.debug('Game Over')
             raise GameOver()
 
     def discard(self) -> List[int]:
         raise NotImplementedError
 
-    def next_card(self, seq: List[int], **kwargs) -> int:
+    def next_card(self, seq: List[int], **kwargs) -> Tuple[int, bool]:
         cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
         num_valid = len(valid)
@@ -70,8 +67,7 @@ class Player(object):
             if num_valid == 1:
                 return valid[0], False
             else:
-                return self.choose_card(valid, seq)
-                return max(valid, key=lambda c: self._priority(c, seq)), False
+                return self.choose_card(valid, seq), False
 
     def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
         raise NotImplementedError
@@ -101,16 +97,15 @@ class HumanPlayer(Player):
             d = input('Choose card: seq [%s] hand [%s]: ' % (seq_string(seq), hand_string(valid)))
             c = card_number(d)
             if c in self.hand:
-                return c, False
+                return c
             else:
                 print("Please choose a card in your hand.")
 
 
 class BasicPlayer(Player):
     def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
-        return max(valid, key=lambda c: self._priority(c, seq)), False
+        return max(valid, key=lambda c: self._priority(c, seq))
 
-    # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
     def discard(self) -> List[int]:
         """Choose two cards to discard to crib from a hand of six."""
         assert len(self.hand) == 6
@@ -130,6 +125,8 @@ class StandardPlayer(BasicPlayer):
         Pick two cards that maximize potential score"""
         assert len(self.hand) == 6
         best_score = -9999
+        best_kept = None
+        best_discards = None
         crib_coefficient = 13 if self.is_dealer else -13
         for d in _DIVISIONS:
             total = 0
@@ -154,14 +151,14 @@ class StandardPlayer(BasicPlayer):
 
 class StandardPlusPlayer(StandardPlayer):
     # Pick highest scoring cards and resolve ties in favor of highest card.
-    # Account for possible opponent response.
+    # Account for expected value of opponent's response.
     def _priority(self, card: int, seq: List[int]) -> int:
         expected_score = score_sequence(seq, card)
-        # if len is 7 there is no next card
+        # if len is 7, there is no next card
         if len(seq) >= 7:
             return 100 * expected_score + card_points(card)
 
-        # compute the expected response
+        # compute the expected value of the opponent's response
         responses = [(response, score_sequence((seq + [card]), response))
                      for response in range(13)]
         responses = [r for r in responses if r[1] > 0]
@@ -209,13 +206,13 @@ class StandardPlusPlayer(StandardPlayer):
         return 100 * expected_score + card_points(card)
 
 
-def create_player(level=2, is_dealer=True) -> Player:
+def create_player(level=2) -> Player:
     """Return a cribbage player of the requested level."""
     if level == 0:
-        return HumanPlayer(is_dealer)
+        return BasicPlayer()
     elif level == 1:
-        return StandardPlayer(is_dealer)
+        return StandardPlayer()
     elif level == 2 or level == -1:  # -1 signifies max
-        return StandardPlusPlayer(is_dealer)
+        return StandardPlusPlayer()
     else:
-        return BasicPlayer(is_dealer)
+        return BasicPlayer()

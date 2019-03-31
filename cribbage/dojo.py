@@ -1,9 +1,9 @@
 """Framework for comparing two players."""
 import logging
 
-from cribbage.crib_player import create_player, GameOver, Player
+from cribbage.crib_player import create_player, GameOver, HumanPlayer, Player
 from cribbage.crib_utils import seq_count
-from cribbage.deck import Deck, DECK, JACK, value, seq_string, hand_string
+from cribbage.deck import Deck, DECK, hand_string, JACK, random_draw, seq_string, value
 from cribbage.score import score, score_sequence
 
 
@@ -31,7 +31,7 @@ def play_hands(player1: Player, player2: Player, num_hands: int) -> int:
     # The stronger player is assumed to go second so we record wins/margin
     # from Player 2's point of view.
 
-    # Play games twice once from each side.
+    # Play hands twice, once from each side.
     margin = 0
     for i in range(num_hands):
         print('Player 1(%s) Player 2 (%s) Hand %d' % (player1.name, player2.name, i + 1))
@@ -63,7 +63,7 @@ def play_game(first: Player, second: Player) -> bool:
     dealer, pone = first, second
     deck = Deck()
     hand = 1
-    print('DEALER(%s) PONE(%s) Hand %d' % (dealer.name, dealer.score, hand))
+    print('DEALER(%s) PONE(%s) Hand %d' % (dealer.name, pone.name, hand))
     try:
         while first.score < 121 and second.score < 121:
             deck.shuffle()
@@ -77,40 +77,39 @@ def play_game(first: Player, second: Player) -> bool:
             hand += 1
     except GameOver:
         if first.score > second.score:
+            print('Game over.  Player %s wins.' % first.name)
             first.wins += 1
         else:
+            print('Game over.  Player %s wins.' % second.name)
             second.wins += 1
     return first.score > second.score
 
 
 def play_hand(dealer: Player, pone: Player, start: int) -> None:
-    try:
-        dealer.is_dealer = True
-        pone.is_dealer = False
-        dealer_discard = dealer.discard()
-        pone_discard = pone.discard()
-        if value(start) == JACK:  # his heels
-            dealer.add(2, verbose=False)
-            print('Start card: %s %s +2 (%d) (for his heels)' % (DECK[start], dealer.score, dealer.name))
-        else:
-            print('Start card: %s' % DECK[start])
-        pegging(dealer, pone)
+    dealer.is_dealer, pone.is_dealer = True, False
+    dealer_discard, pone_discard = dealer.discard(), pone.discard()
+    if value(start) == JACK:  # his heels
+        dealer.add(2)
+        print('Start card: %s dealer %s score 2 (%d) (for his heels)' % (DECK[start], dealer.name, dealer.score))
+    else:
+        print('Start card: %s' % DECK[start])
+    pegging(dealer, pone)
 
-        sc = score(pone.hand, start)
-        pone.add(sc, verbose=False)
-        print('pone   [%s] start %s score %d (%d)' % (hand_string(pone.hand), DECK[start], sc, pone.score))
+    sc = score(pone.hand, start)
+    pone.add(sc)
+    print('pone (%s) [%s] start %s score %d (%d)' % (pone.name, hand_string(pone.hand), DECK[start], sc,
+                                                     pone.score))
 
-        sc = score(dealer.hand, start)
-        dealer.add(sc, verbose=False)
-        print('dealer [%s] start %s score %d (%d)' % (hand_string(dealer.hand), DECK[start], sc, dealer.score))
+    sc = score(dealer.hand, start)
+    dealer.add(sc)
+    print('dealer (%s) [%s] start %s score %d (%d)' % (dealer.name, hand_string(dealer.hand), DECK[start], sc,
+                                                       dealer.score))
 
-        crib = dealer_discard + pone_discard
-        sc = score(crib, start, is_crib=True)
-        dealer.add(sc, verbose=False)
-        print('crib   [%s] start %s score %d (%d)' % (hand_string(crib), DECK[start], sc, dealer.score))
-        print('DEALER(%s) %d PONE(%s) %d\n' % (dealer.name, dealer.score, pone.name, pone.score))
-    except GameOver:
-        return
+    crib = dealer_discard + pone_discard
+    sc = score(crib, start, is_crib=True)
+    dealer.add(sc)
+    print('crib (%s) [%s] start %s score %d (%d)' % (dealer.name, hand_string(crib), DECK[start], sc, dealer.score))
+    print('DEALER(%s) %d PONE(%s) %d\n' % (dealer.name, dealer.score, pone.name, pone.score))
 
 
 def pegging(dealer: Player, pone: Player) -> None:
@@ -130,22 +129,30 @@ def pegging(dealer: Player, pone: Player) -> None:
             else:
                 card_score = score_sequence(seq, card)
                 seq.append(card)
-                player.add(card_score, verbose=False)
-                print('%s plays %s [%s] + %d (%d)' % (player.name, DECK[card], seq_string(seq),
-                                                      card_score, player.score))
+                player.add(card_score)
+                print('%s plays %s [%s] score %d (%d)' % (player.name, DECK[card], seq_string(seq),
+                                                          card_score, player.score))
                 cards_played += 1
-                if cards_played == 8:
-                    print('%s + 1 last (8th) card' % player.name)
+                if cards_played == 8 and seq_count(seq) > 0:
                     player.add(1)
+                    print('%s last (8th) card  score 1 (%d)' % (player.name, player.score))
                     break
+
+
+def choose_dealer(player1: Player, player2: Player) -> bool:
+    c1, c2 = random_draw()
+    print('Draw for deal %s %s, %s %s' % (player1.name, DECK[c1], player2.name, DECK[c2]))
+    return c1 > c2
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.WARNING)
-    p1 = create_player(level=0)
-    p2 = create_player(level=2)
-    m = play_hands(p1, p2, NUM_HANDS)
-    print('Average margin ', m / (2 * NUM_HANDS))
+    p1 = HumanPlayer()
+    p2 = create_player(level=-1)
+    if choose_dealer(p1, p2):
+        p1, p2 = p2, p1
+    m = play_game(p1, p2)
+    # print('Average margin ', m / (2 * NUM_HANDS))
     # play_games(player1, player2, NUM_GAMES)
     # assert NUM_GAMES == player1.wins + player2.wins
     # print('Player2 winning percentage {}'.format(100 * (player2.wins - player1.wins)/NUM_GAMES))

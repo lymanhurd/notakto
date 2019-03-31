@@ -124,4 +124,3 @@ def _is_run(sub_seq: List[int]) -> bool:
     if len(set(val_seq)) != seq_len:
         return False
     return True
-

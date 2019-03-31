@@ -1,9 +1,10 @@
 """Defines the approximate expected value for crib discards.'"""
+from cribbage.deck import value
 from typing import Dict, List, Tuple
 
 
 def expected_crib(discards: List[int]) -> float:
-    return CRIB_EXPECTATION_TABLE[tuple(sorted([d % 13 for d in discards]))]
+    return CRIB_EXPECTATION_TABLE[tuple(sorted([value(d) for d in discards]))]
 
 
 CRIB_EXPECTATION_TABLE: Dict[Tuple[int, ...], float] = {

@@ -17,5 +17,3 @@ def seq_count(seq: List[int]) -> int:
         elif cur_count > 31:
             cur_count = card_points(card)
     return cur_count
-
-
