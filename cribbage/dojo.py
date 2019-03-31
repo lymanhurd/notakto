@@ -125,8 +125,8 @@ def pegging(dealer: Player, pone: Player) -> None:
                 if opponent.passed:
                     # Score one for "last card" unless last card scored for 31.
                     if seq_count(seq) > 0:
-                        print('%s last card' % player.name)
                         player.add(1)
+                        print('%s last card score 1 (%d)' % (player.name, player.score))
             else:
                 card_score = score_sequence(seq, card)
                 seq.append(card)

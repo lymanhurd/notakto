@@ -1,7 +1,7 @@
 """The implementation of web commands for cribbage."""
 import logging
 
-from bottle import abort
+#  from bottle import abort
 from cribbage.crib_player import create_player
 from cribbage.deck import DECK, card_number
 from cribbage.score import score, score_sequence

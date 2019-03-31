@@ -19,8 +19,13 @@ _DIVISIONS: Tuple[Tuple[int]] = (
     (False, False, False, False, True, True))
 
 
-# exception marking the game over
+# Exception marking the game over
 class GameOver(Exception):
+    pass
+
+
+# Exception marking illegal move (by human player).
+class IllegalMOve(Exception):
     pass
 
 
@@ -39,76 +44,20 @@ class Player(object):
     def add(self, points: int, verbose: bool = True) -> None:
         self.score += points
         if points and verbose:
-            print('Adding %s + %d Total %s' % (self.name, points, self.score))
+            logging.debug('Adding %s + %d Total %s' % (self.name, points, self.score))
         if self.score > 120:
-            print('Game Over')
+            logging.debug('Game Over')
             raise GameOver()
 
-    def must_pass(self, seq: List[int]) -> bool:
-        cur_count = seq_count(seq)
-        valid = filter_valid(self.hand, seq, cur_count)
-        return len(valid) == 0
-
     def discard(self) -> List[int]:
         raise NotImplementedError
-
-    def next_card(self, seq, **kwargs) -> int:
-        raise NotImplementedError
-
-
-class HumanPlayer(Player):
-    def discard(self) -> List[int]:
-        """Choose two cards to discard to crib from a hand of six."""
-        assert len(self.hand) == 6
-        self.discarded = []
-        while not self.discarded:
-            whose = "Your" if self.is_dealer else "Opponent's"
-            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(self.hand)))
-            cards = [card_number(c) for c in d.split()]
-            if (len(cards) != 2 or len(set(cards)) != 2 or
-                    cards[0] not in self.hand or
-                    cards[1] not in self.hand):
-                print('Need to discard two cards from hand')
-            else:
-                self.discarded = cards
-        self.hand.remove(self.discarded[0])
-        self.hand.remove(self.discarded[1])        
-        return self.discarded[:]
 
     def next_card(self, seq: List[int], **kwargs) -> int:
         cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
         num_valid = len(valid)
-        if num_valid == 0 and self.opponent_passed:
-            print('New round.')
-            valid = filter_valid(self.hand, seq, 0)
-            num_valid = len(valid)
 
-        if num_valid == 0:
-            self.passed = True
-            return 0, True  # Go
-        else:
-            self.passed = False
-            if num_valid == 1:
-                return valid[0], False
-            else:
-                while True:
-                    d = input('Choose card: seq [%s] hand [%s]: ' %
-                              (seq_string(seq), hand_string(valid)))
-                    c = card_number(d) 
-                    if c in self.hand:
-                        return c, False
-                    else:
-                        print("Please choose a card in your hand.")
-
-
-class BasicPlayer(Player):
-    def next_card(self, seq: List[int], **kwargs) -> int:
-        cur_count = seq_count(seq)
-        valid = filter_valid(self.hand, seq, cur_count)
-        num_valid = len(valid)
-
-        if num_valid == 0 and self.opponent_passed:
+        if num_valid == 0 and self.passed and self.opponent_passed:
             logging.info('New round.')
             valid = filter_valid(self.hand, seq, 0)
             num_valid = len(valid)
@@ -121,7 +70,45 @@ class BasicPlayer(Player):
             if num_valid == 1:
                 return valid[0], False
             else:
+                return self.choose_card(valid, seq)
                 return max(valid, key=lambda c: self._priority(c, seq)), False
+
+    def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
+        raise NotImplementedError
+
+
+class HumanPlayer(Player):
+    def discard(self) -> List[int]:
+        """Choose two cards to discard to crib from a hand of six."""
+        assert len(self.hand) == 6
+        self.discarded = []
+        while not self.discarded:
+            whose = 'Your' if self.is_dealer else 'Opponent\'s'
+            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(self.hand)))
+            cards = [card_number(c) for c in d.split()]
+            if (len(cards) != 2 or len(set(cards)) != 2 or
+                    cards[0] not in self.hand or
+                    cards[1] not in self.hand):
+                print('Need to discard two cards from hand')
+            else:
+                self.discarded = cards
+        self.hand.remove(self.discarded[0])
+        self.hand.remove(self.discarded[1])        
+        return self.discarded[:]
+
+    def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
+        while True:
+            d = input('Choose card: seq [%s] hand [%s]: ' % (seq_string(seq), hand_string(valid)))
+            c = card_number(d)
+            if c in self.hand:
+                return c, False
+            else:
+                print("Please choose a card in your hand.")
+
+
+class BasicPlayer(Player):
+    def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
+        return max(valid, key=lambda c: self._priority(c, seq)), False
 
     # .../cribbage/discard?hand=0,1,2,3,4,5&comp_score=120&human_score=100&dealer=computer
     def discard(self) -> List[int]:
@@ -219,7 +206,6 @@ class StandardPlusPlayer(StandardPlayer):
                 # cards turned up nothing.
                 denominator -= seen_count[r[0]]
                 p *= q
-
         return 100 * expected_score + card_points(card)
 
 
