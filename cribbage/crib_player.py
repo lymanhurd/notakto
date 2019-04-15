@@ -7,7 +7,7 @@ from cribbage.deck import card_number, card_points, seq_string, hand_string
 from cribbage.score import score, score_sequence
 from typing import List, Tuple
 
-_DIVISIONS: Tuple[Tuple[int]] = (
+_DIVISIONS: Tuple[Tuple[bool]] = (
     (True, True, False, False, False, False), (True, False, True, False, False, False),
     (True, False, False, True, False, False), (True, False, False, False, True, False),
     (True, False, False, False, False, True), (False, True, True, False, False, False),
@@ -21,11 +21,6 @@ _DIVISIONS: Tuple[Tuple[int]] = (
 
 # Exception marking the game over
 class GameOver(Exception):
-    pass
-
-
-# Exception marking illegal move (by human player).
-class IllegalMOve(Exception):
     pass
 
 
@@ -49,7 +44,7 @@ class Player(object):
     def discard(self) -> List[int]:
         raise NotImplementedError
 
-    def next_card(self, seq: List[int], **kwargs) -> Tuple[int, bool]:
+    def next_card(self, seq: List[int]) -> Tuple[int, bool]:
         cur_count = seq_count(seq)
         valid = filter_valid(self.hand, seq, cur_count)
         num_valid = len(valid)

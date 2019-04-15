@@ -1,3 +1,4 @@
+"""Standalone utility calculating the expected values saved in crib_expected_values.py."""
 from __future__ import division
 from __future__ import print_function
 

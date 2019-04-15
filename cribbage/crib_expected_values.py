@@ -1,4 +1,4 @@
-"""Defines the approximate expected value for crib discards.'"""
+"""Defines the approximate expected value for crib discards.  Generated automatically by crib_calc.py"""
 from cribbage.deck import value
 from typing import Dict, List, Tuple
 

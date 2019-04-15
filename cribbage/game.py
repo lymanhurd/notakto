@@ -12,12 +12,6 @@ class IllegalMoveException(Exception):
     pass
 
 
-# Dictionary containing all active games (to be replaced with a database).
-# Maps from game_id to game object.
-GAME_DICT: Dict[int, Game] = {0: None}
-LOCK = threading.Lock()
-
-
 # Create a new game (need a lock to avoid duplicating ids).
 def start_game(level: int = 1):
     with LOCK:
@@ -59,6 +53,11 @@ class Game(object):
             d['crib'] = self.crib
         return json.dumps(d)
 
+
+# Dictionary containing all active games (to be replaced with a database).
+# Maps from game_id to game object.
+GAME_DICT: Dict[int, Game] = {}
+LOCK = threading.Lock()
 
 # TBD
 if __name__ == '__main__':
