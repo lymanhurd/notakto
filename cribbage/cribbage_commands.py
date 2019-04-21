@@ -10,7 +10,7 @@ def cribbage_command(command: str, query: Dict[str, str]) -> str:
     if command.lower() == 'start':
         is_dealer = query.get('dealer', 'False') == 'True'
         new_hand = Hand.create_hand(is_dealer)
-        return new_hand.id, new_hand.player_cards()
+        return new_hand.id, new_hand.player_cards_string()
     # Choose two cards to discard to the crib.  If player us dealer returns computer's first card played.
     # Must be the first command for a given hand.
     elif command.lower() == 'discard':
@@ -24,6 +24,6 @@ def cribbage_command(command: str, query: Dict[str, str]) -> str:
     # Return crib.  Can only be called after all eight cards have been played.
     elif command.lower() == 'crib':
         hand = Hand.get_hand_by_id(query.get('id', ''))
-        return hand.crib()
+        return hand.crib_string()
     else:
         raise Exception('Unknown cribbage command: {}.'.format(command))

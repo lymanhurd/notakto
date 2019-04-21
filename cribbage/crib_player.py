@@ -42,6 +42,10 @@ class Player(object):
             raise GameOver()
 
     def discard(self) -> List[int]:
+        self.discarded = self.choose_discards(self.is_dealer, self.hand)
+
+    @staticmethod
+    def choose_discards(is_dealer: bool, hand: List[int]) -> List[int]:
         raise NotImplementedError
 
     def next_card(self, seq: List[int]) -> Tuple[int, bool]:
@@ -69,23 +73,22 @@ class Player(object):
 
 
 class HumanPlayer(Player):
-    def discard(self) -> List[int]:
+    @staticmethod
+    def choose_discards(is_dealer: bool, hand: List[int]) -> List[int]:
         """Choose two cards to discard to crib from a hand of six."""
-        assert len(self.hand) == 6
-        self.discarded = []
-        while not self.discarded:
-            whose = 'Your' if self.is_dealer else 'Opponent\'s'
-            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(self.hand)))
+        assert len(hand) == 6
+        discarded = []
+        while not discarded:
+            whose = 'Your' if is_dealer else 'Opponent\'s'
+            d = input('%s crib: Hand [%s] Choose discards: ' % (whose, hand_string(hand)))
             cards = [card_number(c) for c in d.split()]
             if (len(cards) != 2 or len(set(cards)) != 2 or
-                    cards[0] not in self.hand or
-                    cards[1] not in self.hand):
+                    cards[0] not in hand or
+                    cards[1] not in hand):
                 print('Need to discard two cards from hand')
             else:
-                self.discarded = cards
-        self.hand.remove(self.discarded[0])
-        self.hand.remove(self.discarded[1])        
-        return self.discarded[:]
+                discarded = cards
+        return discarded[:]
 
     def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
         while True:
@@ -101,12 +104,12 @@ class BasicPlayer(Player):
     def choose_card(self, valid: List[int], seq: List[int], **kwargs) -> int:
         return max(valid, key=lambda c: self._priority(c, seq))
 
-    def discard(self) -> List[int]:
+    @staticmethod
+    def choose_discards(is_dealer: bool, hand: List[int]) -> List[int]:
         """Choose two cards to discard to crib from a hand of six."""
-        assert len(self.hand) == 6
-        self.discarded = self.hand[:2]
-        self.hand = self.hand[2:]
-        return self.hand[:2]
+        assert len(hand) == 6
+        discarded = hand[:2]
+        return discarded
 
     # The basic algorithm always plays the highest count among legal cards.
     def _priority(self, card, unused_seq):
@@ -114,28 +117,25 @@ class BasicPlayer(Player):
 
 
 class StandardPlayer(BasicPlayer):
-    def discard(self) -> List[int]:
+    @staticmethod
+    def choose_discards(is_dealer: bool, hand: List[int]) -> List[int]:
         """Choose two cards to discard to crib from a hand of six.
 
         Pick two cards that maximize potential score"""
-        assert len(self.hand) == 6
+        assert len(hand) == 6
         best_score = -9999
-        best_kept = None
         best_discards = None
-        crib_coefficient = 13 if self.is_dealer else -13
+        crib_coefficient = 13 if is_dealer else -13
         for d in _DIVISIONS:
             total = 0
-            discards = [self.hand[i] for i in range(6) if d[i]]
-            kept = [self.hand[i] for i in range(6) if not d[i]]
+            discards = [hand[i] for i in range(6) if d[i]]
+            kept = [hand[i] for i in range(6) if not d[i]]
             for start in range(13):
                 total += score(kept, start)
             total += crib_coefficient * expected_crib(discards)
             if total > best_score:
                 best_discards = discards
-                best_kept = kept
                 best_score = total
-        self.hand = best_kept
-        self.discarded = best_discards
         return best_discards
 
     # Pick highest scoring cards and resolve ties in favor of highest card.

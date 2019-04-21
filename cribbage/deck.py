@@ -47,12 +47,12 @@ def value(card: int) -> int:
     return card // 4 % 13
 
 
-def seq_string(seq: List[int]) -> str:
-    return ' '.join([DECK[c] for c in seq])
+def seq_string(seq: List[int], sep: str = ' ') -> str:
+    return sep.join([DECK[c] for c in seq])
 
 
-def hand_string(hand: List[int]) -> str:
-    return seq_string(sorted(hand))
+def hand_string(hand: List[int], sep: str = ' ') -> str:
+    return seq_string(sorted(hand), sep)
 
 
 def random_draw() -> Tuple[int, int]:

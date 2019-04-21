@@ -113,10 +113,7 @@ def _ways_to_make_sum(n: int, l: List[int]) -> int:
 
 
 def _is_run(sub_seq: List[int]) -> bool:
-    """
-
-    :rtype: bool
-    """
+    """Determine if the given sub-sequence forms a run. """
     seq_len = len(sub_seq)
     val_seq = [value(s) for s in sub_seq]
     if max(val_seq) - min(val_seq) != seq_len - 1:
