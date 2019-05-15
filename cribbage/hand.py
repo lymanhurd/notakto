@@ -10,20 +10,22 @@ import logging
 class Hand(object):
     default_hand = None
 
-    def __init__(self, is_dealer: bool = False):
+    def __init__(self, is_dealer: bool = False, seed: str = None):
         self.is_dealer = is_dealer
         self.id = 1
-        deck = Deck()
+        deck = Deck(seed=seed)
         self.player_cards = deck.deal(6)
         self.computer_cards = deck.deal(6)
         self.start = deck.deal(1)[0]
         self.crib = []
         self.seq = []
         self.opponent = StandardPlusPlayer()
+        self.opponent.start = self.start
+        self.opponent.hand = self.computer_cards
 
     @classmethod
-    def create_hand(cls, is_dealer) -> Hand:
-        cls.default_hand = cls(is_dealer)
+    def create_hand(cls, is_dealer: bool, seed: str = None) -> Hand:
+        cls.default_hand = cls(is_dealer, seed=seed)
         return cls.default_hand
 
     @classmethod
@@ -38,16 +40,16 @@ class Hand(object):
         assert len(self.player_cards) == 6 and len(self.computer_cards) == 6
         cards = [card_number(c) for c in card_string.split(',') if c]
         self.crib = cards
-        self.crib += self.opponent.choose_discards(self.is_dealer, self.computer_cards)
+        self.crib += self.opponent.discard()
         logging.info('crib = %s', self.crib)
         if self.is_dealer:
-            return self.opponent.next_card(self.computer_cards, self.seq, self.start)
+            return self.opponent.next_card(self.seq)
 
     def play(self, card_str: str) -> str:
         card = card_number(card_str)
         self.seq.append(card)
         if len(self.seq) < 8:
-            return self.opponent.next_card(self.computer_cards, self.seq, self.start)
+            return self.opponent.next_card(self.seq)
 
     def crib_string(self) -> str:
         assert len(self.seq) == 8 and len(self.crib) == 4

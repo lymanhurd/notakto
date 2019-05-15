@@ -3,13 +3,13 @@ from cribbage.hand import Hand
 from typing import Dict
 
 
-def cribbage_command(command: str, query: Dict[str, str]) -> str:
+def cribbage_command(command: str, query: Dict[str, str], seed: str = None) -> str:
     """Central method to control cribbage commands."""
     # Start a new game.  Returns id of new hand plus initial six cards.  Parameter specifies whether the human is the
     # dealer.
     if command.lower() == 'start':
         is_dealer = query.get('dealer', 'False') == 'True'
-        new_hand = Hand.create_hand(is_dealer)
+        new_hand = Hand.create_hand(is_dealer, seed=seed)
         return new_hand.id, new_hand.player_cards_string()
     # Choose two cards to discard to the crib.  If player us dealer returns computer's first card played.
     # Must be the first command for a given hand.

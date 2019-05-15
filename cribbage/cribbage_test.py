@@ -7,29 +7,31 @@ from cribbage.deck import card_number, Deck, DECK, hand_string, JACK, random_dra
 
 from cribbage.cribbage_commands import cribbage_command
 
+TEST_SEED = 'test+seed'
+
 
 class TestCribbage(unittest.TestCase):
     def test_start(self):
-        hand_id, card_string = cribbage_command('start', {'is_dealer': 'True'})
+        hand_id, card_string = cribbage_command('start', {'is_dealer': 'True'}, seed=TEST_SEED)
         cards = [card_number(c) for c in card_string.split(',')]
         self.assertEqual(hand_id, 1)
         self.assertEqual(len(cards), 6)
         self.assertEqual(len(set(cards)), 6)
 
     def test_discard_non_dealer(self):
-        hand_id, cards = cribbage_command('start', {'is_dealer': 'False'})
+        hand_id, cards = cribbage_command('start', {'is_dealer': 'False'}, seed=TEST_SEED)
         discards = ','.join(cards.split(',')[:2])
         reply = cribbage_command('discard', {'id': hand_id, 'cards': discards})
         self.assertIsNone(reply)
 
     def test_play(self):
-        hand_id, cards = cribbage_command('start', {'is_dealer': 'False'})
+        hand_id, cards = cribbage_command('start', {'is_dealer': 'False'}, seed=TEST_SEED)
         to_play = cards.split(',')[0]
         logging.info('to_play %s', to_play)
-        self.assertEqual('5C', cribbage_command('play', {'id': hand_id, 'card': to_play}))
+        self.assertEqual((29, False), cribbage_command('play', {'id': hand_id, 'card': to_play}))
 
     def test_crib_before_discard(self):
-        hand_id, hand = cribbage_command('start', {'is_dealer': 'False'})
+        hand_id, hand = cribbage_command('start', {'is_dealer': 'False'}, seed=TEST_SEED)
         # Cannot call "crib" before "discard".
         with self.assertRaises(AssertionError):
             cribbage_command('crib', {'id': hand_id})

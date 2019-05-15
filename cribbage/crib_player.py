@@ -43,6 +43,7 @@ class Player(object):
 
     def discard(self) -> List[int]:
         self.discarded = self.choose_discards(self.is_dealer, self.hand)
+        return self.discarded
 
     @staticmethod
     def choose_discards(is_dealer: bool, hand: List[int]) -> List[int]:
